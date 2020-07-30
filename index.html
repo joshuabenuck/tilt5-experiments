@@ -1,0 +1,102 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        const socket = io('ws://localhost:3000');
+
+        socket.on('connect', () => {
+            // either with send()
+            socket.send('Hello!');
+
+            // or with emit() and custom event names
+            socket.emit('salutations', 'Hello!', { 'mr': 'john' }, Uint8Array.from([1, 2, 3, 4]));
+        });
+
+        // handle the event sent with socket.send()
+        socket.on('message', data => {
+            console.log(data);
+        });
+
+        // handle the event sent with socket.emit()
+        socket.on('greetings', (elem1, elem2, elem3) => {
+            console.log(elem1, elem2, elem3);
+        });
+    </script>
+</head>
+
+<body>
+    <canvas id="c" width="375px"></canvas>
+    <img id="show" href="#"></img>
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
+
+        // http://found.ward.bay.wiki.org/threejs-fundamentals.html
+
+        console.log(THREE)
+
+        const canvas = document.querySelector('#c');
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        window.renderer = renderer;
+
+        const fov = 75;
+        const aspect = 2.5;  // the canvas default
+        const near = 0.1;
+        const far = 5;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.z = 2;
+        const scene = new THREE.Scene();
+
+        {
+            const color = 0xFFFFFF;
+            const intensity = 1;
+            const light = new THREE.DirectionalLight(color, intensity);
+            light.position.set(-1, 2, 4);
+            scene.add(light);
+        }
+
+        const boxWidth = 1;
+        const boxHeight = 1;
+        const boxDepth = 1;
+        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+        function makeInstance(geometry, color, x) {
+            const material = new THREE.MeshPhongMaterial({ color });
+            const cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+            cube.position.x = x;
+            return cube;
+        }
+
+        const cubes = [
+            makeInstance(geometry, 0x44aa88, 0),
+            makeInstance(geometry, 0x8844aa, -2),
+            makeInstance(geometry, 0xaa8844, 2),
+        ];
+
+
+        function render(time) {
+            time *= 0.001;  // convert time to seconds
+
+            cubes.forEach((cube, ndx) => {
+                const speed = 1 + ndx * .1;
+                const rot = time * speed;
+                cube.rotation.x = rot;
+                cube.rotation.y = rot;
+            });
+
+            renderer.render(scene, camera);
+
+            requestAnimationFrame(render);
+            show.src = canvas.toDataURL();
+            let ms = Date.now();
+            // console.log(ms);
+            socket.send(show.src);
+        }
+        requestAnimationFrame(render);
+
+
+    </script>
+</body>
+
+</html>
