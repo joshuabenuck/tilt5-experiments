@@ -26,9 +26,8 @@
 </head>
 
 <body>
-    <center><p style="width:180px;">While close to screen, gaze to distance, then as images fuse, slowly focus.</p>
-    <canvas id="left" width="175.px" height="375px"></canvas>
-    <canvas id="right" width="175.px" height="375px"></canvas>
+    <canvas id="c" width="375px"></canvas>
+    <img id="show" href="#"></img>
     <script type="module">
         import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
 
@@ -36,17 +35,16 @@
 
         console.log(THREE)
 
-        const renderers = [
-            new THREE.WebGLRenderer({ canvas:document.querySelector('#left') }),
-            new THREE.WebGLRenderer({ canvas:document.querySelector('#right') })
-        ]
+        const canvas = document.querySelector('#c');
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        window.renderer = renderer;
 
-        const fov = 85;
-        const aspect = .3;  // the canvas default
+        const fov = 75;
+        const aspect = 2.5;  // the canvas default
         const near = 0.1;
         const far = 5;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        camera.position.z = 4;
+        camera.position.z = 2;
         const scene = new THREE.Scene();
 
         {
@@ -62,11 +60,11 @@
         const boxDepth = 1;
         const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-        function makeInstance(geometry, color, y) {
+        function makeInstance(geometry, color, x) {
             const material = new THREE.MeshPhongMaterial({ color });
             const cube = new THREE.Mesh(geometry, material);
             scene.add(cube);
-            cube.position.y = y;
+            cube.position.x = x;
             return cube;
         }
 
@@ -87,20 +85,13 @@
                 cube.rotation.y = rot;
             });
 
-            let dx = 0.2
-            camera.position.x = -dx
-            camera.lookAt(scene.position)
-            renderers[0].render(scene, camera);
-
-            camera.position.x = dx
-            camera.lookAt(scene.position)
-            renderers[1].render(scene, camera);
+            renderer.render(scene, camera);
 
             requestAnimationFrame(render);
-            // show.src = canvas.toDataURL();
-            // let ms = Date.now();
-            // // console.log(ms);
-            // socket.send(show.src);
+            show.src = canvas.toDataURL();
+            let ms = Date.now();
+            // console.log(ms);
+            socket.send(show.src);
         }
         requestAnimationFrame(render);
 
