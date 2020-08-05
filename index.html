@@ -74,10 +74,12 @@
             renderer.render(scene, camera);
 
             requestAnimationFrame(render);
-            show.src = canvas.toDataURL();
+            canvas.toBlob((blob) => {
+                socket.send(blob);
+            });
+            // show.src = canvas.toDataURL();
             let ms = Date.now();
             // console.log(ms);
-            socket.send(show.src);
         }
         requestAnimationFrame(render);
 
