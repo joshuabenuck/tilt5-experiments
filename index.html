@@ -2,11 +2,11 @@
 
 <head>
     <script type="text/javascript">
-        const socket = new WebSocket('ws://localhost:3000', 'tilt5-protocol');
+        // const socket = new WebSocket('ws://localhost:3000', 'tilt5-protocol');
 
-        socket.addEventListener('connect', () => {
-            socket.send('Hello from Websockets!');
-        });
+        // socket.addEventListener('connect', () => {
+        //     socket.send('Hello from Websockets!');
+        // });
 
     </script>
 </head>
@@ -47,9 +47,16 @@
         const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
         function makeInstance(geometry, color, x) {
-            const material = new THREE.MeshPhongMaterial({ color });
+            var map = new THREE.TextureLoader().load("index.png");
+            // var material = new THREE.SpriteMaterial({ map: map, color: 0xffffff });
+            // var cube = new THREE.Sprite(material);
+            // var cube = new THREE.Sprite(material);
+            var material = new THREE.MeshLambertMaterial({ map });
             const cube = new THREE.Mesh(geometry, material);
             scene.add(cube);
+            // const material = new THREE.MeshPhongMaterial({ color });
+            // const cube = new THREE.Mesh(geometry, material);
+            // scene.add(cube);
             cube.position.x = x;
             return cube;
         }
@@ -74,9 +81,9 @@
             renderer.render(scene, camera);
 
             requestAnimationFrame(render);
-            canvas.toBlob((blob) => {
-                socket.send(blob);
-            });
+            // canvas.toBlob((blob) => {
+            //     socket.send(blob);
+            // });
             // show.src = canvas.toDataURL();
             let ms = Date.now();
             // console.log(ms);
