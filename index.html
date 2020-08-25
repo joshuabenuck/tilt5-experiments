@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <canvas id="c" width="375px"></canvas>
+    <canvas id="c" width="1375px" height="800px"></canvas>
     <img id="show" href="#"></img>
     <script type="module">
         import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
@@ -25,33 +25,38 @@
         const renderer = new THREE.WebGLRenderer({ canvas });
         window.renderer = renderer;
 
-        const fov = 75;
+        const fov = 50;
         const aspect = 2.5;  // the canvas default
         const near = 0.1;
         const far = 5;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        camera.position.z = 2;
+        camera.position.z = 4;
         const scene = new THREE.Scene();
 
         {
             const color = 0xFFFFFF;
             const intensity = 1;
-            const light = new THREE.DirectionalLight(color, intensity);
+            const light = new THREE.AmbientLight(color, intensity);
             light.position.set(-1, 2, 4);
             scene.add(light);
         }
 
-        const boxWidth = 1;
-        const boxHeight = 1;
-        const boxDepth = 1;
+        const boxWidth = 1.5;
+        const boxHeight = 1.5;
+        const boxDepth = 1.5;
         const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
         function makeInstance(geometry, color, x) {
-            var map = new THREE.TextureLoader().load("index.png");
-            // var material = new THREE.SpriteMaterial({ map: map, color: 0xffffff });
-            // var cube = new THREE.Sprite(material);
-            // var cube = new THREE.Sprite(material);
-            var material = new THREE.MeshLambertMaterial({ map });
+            let loader = new THREE.TextureLoader();
+            var material = [
+                new THREE.MeshBasicMaterial({ map: loader.load("metadata-editor.svg") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("index.png") }),
+                // facing
+                new THREE.MeshBasicMaterial({ map: loader.load("metadata-editor.svg") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("index.png") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("metadata-editor.svg") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("index.png") }),
+            ];
             const cube = new THREE.Mesh(geometry, material);
             scene.add(cube);
             // const material = new THREE.MeshPhongMaterial({ color });
@@ -63,18 +68,18 @@
 
         const cubes = [
             makeInstance(geometry, 0x44aa88, 0),
-            makeInstance(geometry, 0x8844aa, -2),
-            makeInstance(geometry, 0xaa8844, 2),
+            // makeInstance(geometry, 0x8844aa, -2),
+            // makeInstance(geometry, 0xaa8844, 2),
         ];
 
 
         function render(time) {
             time *= 0.001;  // convert time to seconds
 
-            cubes.forEach((cube, ndx) => {
-                const speed = 1 + ndx * .1;
+            cubes.forEach((cube, idx) => {
+                const speed = 1 + 0.5 * .1;
                 const rot = time * speed;
-                cube.rotation.x = rot;
+                // cube.rotation.x = rot;
                 cube.rotation.y = rot;
             });
 
