@@ -1,0 +1,264 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="433pt" height="548pt" viewBox="0.00 0.00 433.16 548.00" style="width: 100%; height: auto;">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 544)">
+<title>%0</title>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-544 429.1564,-544 429.1564,4 -4,4"></polygon>
+<!-- modules -->
+<g id="node1" class="node">
+<title>modules</title>
+<ellipse fill="#98fb98" stroke="#000000" cx="65.6129" cy="-378" rx="43.5214" ry="18"></ellipse>
+<text text-anchor="middle" x="65.6129" y="-373.8" font-family="Times,serif" font-size="14.00" fill="#000000">modules</text>
+</g>
+<!-- application -->
+<g id="node3" class="node">
+<title>application</title>
+<polygon fill="#98fb98" stroke="#000000" points="112.8194,-324 34.4064,-324 34.4064,-288 112.8194,-288 112.8194,-324"></polygon>
+<text text-anchor="middle" x="73.6129" y="-301.8" font-family="Times,serif" font-size="14.00" fill="#000000">application</text>
+</g>
+<!-- modules&#45;&gt;application -->
+<g id="edge2" class="edge">
+<title>modules-&gt;application</title>
+<path fill="none" stroke="#000000" d="M67.6316,-359.8314C68.4872,-352.131 69.5046,-342.9743 70.4555,-334.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="73.9412,-334.7386 71.567,-324.4133 66.984,-333.9656 73.9412,-334.7386"></polygon>
+</g>
+<!-- core -->
+<g id="node2" class="node">
+<title>core</title>
+<polygon fill="#98fb98" stroke="#000000" points="129.6129,-468 75.6129,-468 75.6129,-432 129.6129,-432 129.6129,-468"></polygon>
+<text text-anchor="middle" x="102.6129" y="-445.8" font-family="Times,serif" font-size="14.00" fill="#000000">core</text>
+</g>
+<!-- core&#45;&gt;modules -->
+<g id="edge1" class="edge">
+<title>core-&gt;modules</title>
+<path fill="none" stroke="#000000" d="M93.2762,-431.8314C89.0816,-423.6688 84.0461,-413.87 79.4276,-404.8827"></path>
+<polygon fill="#000000" stroke="#000000" points="82.5022,-403.208 74.8184,-395.9134 76.2761,-406.4075 82.5022,-403.208"></polygon>
+</g>
+<!-- wiki -->
+<g id="node6" class="node">
+<title>wiki</title>
+<ellipse fill="#ffe4c4" stroke="#000000" cx="73.6129" cy="-234" rx="28.4088" ry="18"></ellipse>
+<text text-anchor="middle" x="73.6129" y="-229.8" font-family="Times,serif" font-size="14.00" fill="#000000">wiki</text>
+</g>
+<!-- application&#45;&gt;wiki -->
+<g id="edge11" class="edge">
+<title>application-&gt;wiki</title>
+<path fill="none" stroke="#000000" d="M73.6129,-287.8314C73.6129,-280.131 73.6129,-270.9743 73.6129,-262.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="77.113,-262.4132 73.6129,-252.4133 70.113,-262.4133 77.113,-262.4132"></polygon>
+</g>
+<!-- compose -->
+<g id="node7" class="node">
+<title>compose</title>
+<polygon fill="#ffe4c4" stroke="#000000" points="198.3777,-252 132.8481,-252 132.8481,-216 198.3777,-216 198.3777,-252"></polygon>
+<text text-anchor="middle" x="165.6129" y="-229.8" font-family="Times,serif" font-size="14.00" fill="#000000">compose</text>
+</g>
+<!-- application&#45;&gt;compose -->
+<g id="edge4" class="edge">
+<title>application-&gt;compose</title>
+<path fill="none" stroke="#000000" d="M96.8284,-287.8314C108.1599,-278.9632 121.9593,-268.1637 134.2156,-258.5718"></path>
+<polygon fill="#000000" stroke="#000000" points="136.6869,-261.0822 142.4048,-252.1628 132.3727,-255.5697 136.6869,-261.0822"></polygon>
+</g>
+<!-- plugins -->
+<g id="node4" class="node">
+<title>plugins</title>
+<polygon fill="#98fb98" stroke="#000000" points="57.3391,-468 -.1133,-468 -.1133,-432 57.3391,-432 57.3391,-468"></polygon>
+<text text-anchor="middle" x="28.6129" y="-445.8" font-family="Times,serif" font-size="14.00" fill="#000000">plugins</text>
+</g>
+<!-- plugins&#45;&gt;modules -->
+<g id="edge3" class="edge">
+<title>plugins-&gt;modules</title>
+<path fill="none" stroke="#000000" d="M37.9496,-431.8314C42.1442,-423.6688 47.1797,-413.87 51.7982,-404.8827"></path>
+<polygon fill="#000000" stroke="#000000" points="54.9497,-406.4075 56.4074,-395.9134 48.7236,-403.208 54.9497,-406.4075"></polygon>
+</g>
+<!-- dns -->
+<g id="node5" class="node">
+<title>dns</title>
+<ellipse fill="#ffe4c4" stroke="#000000" cx="315.6129" cy="-234" rx="27" ry="18"></ellipse>
+<text text-anchor="middle" x="315.6129" y="-229.8" font-family="Times,serif" font-size="14.00" fill="#000000">dns</text>
+</g>
+<!-- server -->
+<g id="node8" class="node">
+<title>server</title>
+<polygon fill="#ffe4c4" stroke="#000000" points="339.6129,-180 285.6129,-180 285.6129,-144 339.6129,-144 339.6129,-180"></polygon>
+<text text-anchor="middle" x="312.6129" y="-157.8" font-family="Times,serif" font-size="14.00" fill="#000000">server</text>
+</g>
+<!-- dns&#45;&gt;server -->
+<g id="edge8" class="edge">
+<title>dns-&gt;server</title>
+<path fill="none" stroke="#000000" d="M314.8559,-215.8314C314.535,-208.131 314.1535,-198.9743 313.7969,-190.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="317.2935,-190.2589 313.3801,-180.4133 310.2996,-190.5503 317.2935,-190.2589"></polygon>
+</g>
+<!-- backup -->
+<g id="node13" class="node">
+<title>backup</title>
+<polygon fill="#ffe4c4" stroke="#000000" points="102.0437,-180 45.1821,-180 45.1821,-144 102.0437,-144 102.0437,-180"></polygon>
+<text text-anchor="middle" x="73.6129" y="-157.8" font-family="Times,serif" font-size="14.00" fill="#000000">backup</text>
+</g>
+<!-- wiki&#45;&gt;backup -->
+<g id="edge12" class="edge">
+<title>wiki-&gt;backup</title>
+<path fill="none" stroke="#000000" d="M73.6129,-215.8314C73.6129,-208.131 73.6129,-198.9743 73.6129,-190.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="77.113,-190.4132 73.6129,-180.4133 70.113,-190.4133 77.113,-190.4132"></polygon>
+</g>
+<!-- compose&#45;&gt;server -->
+<g id="edge5" class="edge">
+<title>compose-&gt;server</title>
+<path fill="none" stroke="#000000" d="M198.6026,-217.8418C221.6193,-206.5683 252.3437,-191.5196 276.0978,-179.8849"></path>
+<polygon fill="#000000" stroke="#000000" points="277.7135,-182.9909 285.1546,-175.449 274.6344,-176.7045 277.7135,-182.9909"></polygon>
+</g>
+<!-- federation -->
+<g id="node9" class="node">
+<title>federation</title>
+<polygon fill="#ffe4c4" stroke="#000000" points="345.8595,-108 273.3663,-108 273.3663,-72 345.8595,-72 345.8595,-108"></polygon>
+<text text-anchor="middle" x="309.6129" y="-85.8" font-family="Times,serif" font-size="14.00" fill="#000000">federation</text>
+</g>
+<!-- server&#45;&gt;federation -->
+<g id="edge6" class="edge">
+<title>server-&gt;federation</title>
+<path fill="none" stroke="#000000" d="M311.8559,-143.8314C311.535,-136.131 311.1535,-126.9743 310.7969,-118.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="314.2935,-118.2589 310.3801,-108.4133 307.2996,-118.5503 314.2935,-118.2589"></polygon>
+</g>
+<!-- browser -->
+<g id="node16" class="node">
+<title>browser</title>
+<polygon fill="#add8e6" stroke="#000000" points="425.2,-108 364.0258,-108 364.0258,-72 425.2,-72 425.2,-108"></polygon>
+<text text-anchor="middle" x="394.6129" y="-85.8" font-family="Times,serif" font-size="14.00" fill="#000000">browser</text>
+</g>
+<!-- server&#45;&gt;browser -->
+<g id="edge16" class="edge">
+<title>server-&gt;browser</title>
+<path fill="none" stroke="#000000" d="M333.305,-143.8314C343.3077,-135.0485 355.4679,-124.3712 366.3128,-114.8489"></path>
+<polygon fill="#000000" stroke="#000000" points="368.7223,-117.3909 373.9275,-108.1628 364.1037,-112.1308 368.7223,-117.3909"></polygon>
+</g>
+<!-- domain -->
+<g id="node10" class="node">
+<title>domain</title>
+<polygon fill="#ffe4c4" stroke="#000000" points="345.6087,-324 287.6171,-324 287.6171,-288 345.6087,-288 345.6087,-324"></polygon>
+<text text-anchor="middle" x="316.6129" y="-301.8" font-family="Times,serif" font-size="14.00" fill="#000000">domain</text>
+</g>
+<!-- domain&#45;&gt;dns -->
+<g id="edge7" class="edge">
+<title>domain-&gt;dns</title>
+<path fill="none" stroke="#000000" d="M316.3606,-287.8314C316.2536,-280.131 316.1264,-270.9743 316.0076,-262.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="319.5073,-262.3637 315.8686,-252.4133 312.508,-262.4609 319.5073,-262.3637"></polygon>
+</g>
+<!-- certificates -->
+<g id="node11" class="node">
+<title>certificates</title>
+<polygon fill="#ffe4c4" stroke="#000000" points="204.5151,-396 126.7107,-396 126.7107,-360 204.5151,-360 204.5151,-396"></polygon>
+<text text-anchor="middle" x="165.6129" y="-373.8" font-family="Times,serif" font-size="14.00" fill="#000000">certificates</text>
+</g>
+<!-- proxy -->
+<g id="node12" class="node">
+<title>proxy</title>
+<polygon fill="#ffe4c4" stroke="#000000" points="192.6129,-324 138.6129,-324 138.6129,-288 192.6129,-288 192.6129,-324"></polygon>
+<text text-anchor="middle" x="165.6129" y="-301.8" font-family="Times,serif" font-size="14.00" fill="#000000">proxy</text>
+</g>
+<!-- certificates&#45;&gt;proxy -->
+<g id="edge9" class="edge">
+<title>certificates-&gt;proxy</title>
+<path fill="none" stroke="#000000" d="M165.6129,-359.8314C165.6129,-352.131 165.6129,-342.9743 165.6129,-334.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="169.113,-334.4132 165.6129,-324.4133 162.113,-334.4133 169.113,-334.4132"></polygon>
+</g>
+<!-- proxy&#45;&gt;compose -->
+<g id="edge10" class="edge">
+<title>proxy-&gt;compose</title>
+<path fill="none" stroke="#000000" d="M165.6129,-287.8314C165.6129,-280.131 165.6129,-270.9743 165.6129,-262.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="169.113,-262.4132 165.6129,-252.4133 162.113,-262.4133 169.113,-262.4132"></polygon>
+</g>
+<!-- identity -->
+<g id="node14" class="node">
+<title>identity</title>
+<polygon fill="#add8e6" stroke="#000000" points="423.8903,-252 365.3355,-252 365.3355,-216 423.8903,-216 423.8903,-252"></polygon>
+<text text-anchor="middle" x="394.6129" y="-229.8" font-family="Times,serif" font-size="14.00" fill="#000000">identity</text>
+</g>
+<!-- login -->
+<g id="node15" class="node">
+<title>login</title>
+<polygon fill="#add8e6" stroke="#000000" points="421.6129,-180 367.6129,-180 367.6129,-144 421.6129,-144 421.6129,-180"></polygon>
+<text text-anchor="middle" x="394.6129" y="-157.8" font-family="Times,serif" font-size="14.00" fill="#000000">login</text>
+</g>
+<!-- identity&#45;&gt;login -->
+<g id="edge13" class="edge">
+<title>identity-&gt;login</title>
+<path fill="none" stroke="#000000" d="M394.6129,-215.8314C394.6129,-208.131 394.6129,-198.9743 394.6129,-190.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="398.113,-190.4132 394.6129,-180.4133 391.113,-190.4133 398.113,-190.4132"></polygon>
+</g>
+<!-- login&#45;&gt;browser -->
+<g id="edge14" class="edge">
+<title>login-&gt;browser</title>
+<path fill="none" stroke="#000000" d="M394.6129,-143.8314C394.6129,-136.131 394.6129,-126.9743 394.6129,-118.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="398.113,-118.4132 394.6129,-108.4133 391.113,-118.4133 398.113,-118.4132"></polygon>
+</g>
+<!-- author -->
+<g id="node17" class="node">
+<title>author</title>
+<polygon fill="#add8e6" stroke="#000000" points="421.6129,-36 367.6129,-36 367.6129,0 421.6129,0 421.6129,-36"></polygon>
+<text text-anchor="middle" x="394.6129" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">author</text>
+</g>
+<!-- browser&#45;&gt;author -->
+<g id="edge15" class="edge">
+<title>browser-&gt;author</title>
+<path fill="none" stroke="#000000" d="M394.6129,-71.8314C394.6129,-64.131 394.6129,-54.9743 394.6129,-46.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="398.113,-46.4132 394.6129,-36.4133 391.113,-46.4133 398.113,-46.4132"></polygon>
+</g>
+<!-- source -->
+<g id="node18" class="node">
+<title>source</title>
+<ellipse fill="#ffc0cb" stroke="#000000" cx="249.6129" cy="-450" rx="36.4761" ry="18"></ellipse>
+<text text-anchor="middle" x="249.6129" y="-445.8" font-family="Times,serif" font-size="14.00" fill="#000000">source</text>
+</g>
+<!-- build -->
+<g id="node20" class="node">
+<title>build</title>
+<polygon fill="#ffc0cb" stroke="#000000" points="276.6129,-396 222.6129,-396 222.6129,-360 276.6129,-360 276.6129,-396"></polygon>
+<text text-anchor="middle" x="249.6129" y="-373.8" font-family="Times,serif" font-size="14.00" fill="#000000">build</text>
+</g>
+<!-- source&#45;&gt;build -->
+<g id="edge18" class="edge">
+<title>source-&gt;build</title>
+<path fill="none" stroke="#000000" d="M249.6129,-431.8314C249.6129,-424.131 249.6129,-414.9743 249.6129,-406.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="253.113,-406.4132 249.6129,-396.4133 246.113,-406.4133 253.113,-406.4132"></polygon>
+</g>
+<!-- outpost -->
+<g id="node19" class="node">
+<title>outpost</title>
+<polygon fill="#ffc0cb" stroke="#000000" points="278.3391,-540 220.8867,-540 220.8867,-504 278.3391,-504 278.3391,-540"></polygon>
+<text text-anchor="middle" x="249.6129" y="-517.8" font-family="Times,serif" font-size="14.00" fill="#000000">outpost</text>
+</g>
+<!-- outpost&#45;&gt;source -->
+<g id="edge17" class="edge">
+<title>outpost-&gt;source</title>
+<path fill="none" stroke="#000000" d="M249.6129,-503.8314C249.6129,-496.131 249.6129,-486.9743 249.6129,-478.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="253.113,-478.4132 249.6129,-468.4133 246.113,-478.4133 253.113,-478.4132"></polygon>
+</g>
+<!-- reload -->
+<g id="node21" class="node">
+<title>reload</title>
+<polygon fill="#ffc0cb" stroke="#000000" points="269.6129,-324 215.6129,-324 215.6129,-288 269.6129,-288 269.6129,-324"></polygon>
+<text text-anchor="middle" x="242.6129" y="-301.8" font-family="Times,serif" font-size="14.00" fill="#000000">reload</text>
+</g>
+<!-- build&#45;&gt;reload -->
+<g id="edge19" class="edge">
+<title>build-&gt;reload</title>
+<path fill="none" stroke="#000000" d="M247.8465,-359.8314C247.0979,-352.131 246.2076,-342.9743 245.3756,-334.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="248.8544,-334.0276 244.4031,-324.4133 241.8873,-334.7051 248.8544,-334.0276"></polygon>
+</g>
+<!-- reload&#45;&gt;compose -->
+<g id="edge20" class="edge">
+<title>reload-&gt;compose</title>
+<path fill="none" stroke="#000000" d="M223.1825,-287.8314C213.8809,-279.1337 202.5925,-268.5783 192.4843,-259.1265"></path>
+<polygon fill="#000000" stroke="#000000" points="194.7318,-256.4363 185.037,-252.1628 189.9508,-261.5493 194.7318,-256.4363"></polygon>
+</g>
+<!-- alert -->
+<g id="node22" class="node">
+<title>alert</title>
+<polygon fill="#ffc0cb" stroke="#000000" points="270.6129,-252 216.6129,-252 216.6129,-216 270.6129,-216 270.6129,-252"></polygon>
+<text text-anchor="middle" x="243.6129" y="-229.8" font-family="Times,serif" font-size="14.00" fill="#000000">alert</text>
+</g>
+<!-- reload&#45;&gt;alert -->
+<g id="edge21" class="edge">
+<title>reload-&gt;alert</title>
+<path fill="none" stroke="#000000" d="M242.8652,-287.8314C242.9722,-280.131 243.0994,-270.9743 243.2182,-262.4166"></path>
+<polygon fill="#000000" stroke="#000000" points="246.7178,-262.4609 243.3572,-252.4133 239.7185,-262.3637 246.7178,-262.4609"></polygon>
+</g>
+</g>
+</svg>

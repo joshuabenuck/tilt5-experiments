@@ -1,0 +1,505 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="576pt" height="488pt" viewBox="0.00 0.00 575.54 488.00" style="width: 100%; height: auto;">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 484)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-484 571.54,-484 571.54,4 -4,4"></polygon>
+<!-- Neighborhood
+Patterns -->
+<g id="node1" class="node">
+<title>Neighborhood
+Patterns</title>
+<text text-anchor="middle" x="314.1" y="-385.8" font-family="Times,serif" font-size="14.00">Neighborhood</text>
+<text text-anchor="middle" x="314.1" y="-369" font-family="Times,serif" font-size="14.00">Patterns</text>
+</g>
+<!-- Street
+As
+Center -->
+<g id="node2" class="node">
+<title>Street
+As
+Center</title>
+<polygon fill="lightblue" stroke="black" points="206.1,-316.6 152.1,-316.6 152.1,-257.8 206.1,-257.8 206.1,-316.6"></polygon>
+<text text-anchor="middle" x="179.1" y="-299.8" font-family="Times,serif" font-size="14.00">Street</text>
+<text text-anchor="middle" x="179.1" y="-283" font-family="Times,serif" font-size="14.00">As</text>
+<text text-anchor="middle" x="179.1" y="-266.2" font-family="Times,serif" font-size="14.00">Center</text>
+</g>
+<!-- Neighborhood
+Patterns&#45;&gt;Street
+As
+Center -->
+<g id="edge1" class="edge">
+<title>Neighborhood
+Patterns-&gt;Street
+As
+Center</title>
+<path fill="none" stroke="black" d="M285.14,-360.78C264.49,-346.64 236.59,-327.55 214.59,-312.49"></path>
+<polygon fill="black" stroke="black" points="216.41,-309.49 206.18,-306.73 212.45,-315.27 216.41,-309.49"></polygon>
+</g>
+<!-- Pedestrian
+Sanctuary -->
+<g id="node3" class="node">
+<title>Pedestrian
+Sanctuary</title>
+<polygon fill="lightblue" stroke="black" points="404.42,-213.4 329.79,-213.4 329.79,-172.2 404.42,-172.2 404.42,-213.4"></polygon>
+<text text-anchor="middle" x="367.1" y="-197" font-family="Times,serif" font-size="14.00">Pedestrian</text>
+<text text-anchor="middle" x="367.1" y="-180.2" font-family="Times,serif" font-size="14.00">Sanctuary</text>
+</g>
+<!-- Neighborhood
+Patterns&#45;&gt;Pedestrian
+Sanctuary -->
+<g id="edge2" class="edge">
+<title>Neighborhood
+Patterns-&gt;Pedestrian
+Sanctuary</title>
+<path fill="none" stroke="black" d="M317.86,-360.83C322.98,-334.98 332.93,-288.4 345.1,-249.6 347.86,-240.82 351.33,-231.44 354.7,-222.94"></path>
+<polygon fill="black" stroke="black" points="358.04,-224.02 358.56,-213.44 351.56,-221.39 358.04,-224.02"></polygon>
+</g>
+<!-- Neighborhood
+Square -->
+<g id="node4" class="node">
+<title>Neighborhood
+Square</title>
+<polygon fill="lightblue" stroke="black" points="373.48,-127.4 276.73,-127.4 276.73,-86.2 373.48,-86.2 373.48,-127.4"></polygon>
+<text text-anchor="middle" x="325.1" y="-111" font-family="Times,serif" font-size="14.00">Neighborhood</text>
+<text text-anchor="middle" x="325.1" y="-94.2" font-family="Times,serif" font-size="14.00">Square</text>
+</g>
+<!-- Neighborhood
+Patterns&#45;&gt;Neighborhood
+Square -->
+<g id="edge3" class="edge">
+<title>Neighborhood
+Patterns-&gt;Neighborhood
+Square</title>
+<path fill="none" stroke="black" d="M314.58,-360.75C315.51,-323.65 317.78,-241.31 321.1,-172 321.64,-160.79 322.37,-148.49 323.06,-137.68"></path>
+<polygon fill="black" stroke="black" points="326.57,-137.67 323.73,-127.46 319.59,-137.21 326.57,-137.67"></polygon>
+</g>
+<!-- Neighborhood
+Park -->
+<g id="node5" class="node">
+<title>Neighborhood
+Park</title>
+<polygon fill="lightblue" stroke="black" points="567.48,-127.4 470.73,-127.4 470.73,-86.2 567.48,-86.2 567.48,-127.4"></polygon>
+<text text-anchor="middle" x="519.1" y="-111" font-family="Times,serif" font-size="14.00">Neighborhood</text>
+<text text-anchor="middle" x="519.1" y="-94.2" font-family="Times,serif" font-size="14.00">Park</text>
+</g>
+<!-- Neighborhood
+Patterns&#45;&gt;Neighborhood
+Park -->
+<g id="edge4" class="edge">
+<title>Neighborhood
+Patterns-&gt;Neighborhood
+Park</title>
+<path fill="none" stroke="black" d="M362.59,-372.38C411.66,-363.01 482.7,-346.17 500.1,-324.8 543.85,-271.07 534.71,-183.09 525.98,-137.41"></path>
+<polygon fill="black" stroke="black" points="529.39,-136.64 523.97,-127.54 522.53,-138.04 529.39,-136.64"></polygon>
+</g>
+<!-- Street
+As
+Center&#45;&gt;Pedestrian
+Sanctuary -->
+<g id="edge18" class="edge">
+<title>Street
+As
+Center-&gt;Pedestrian
+Sanctuary</title>
+<path fill="none" stroke="black" d="M206.44,-272.76C236.26,-258.11 284.53,-234.39 320.38,-216.76"></path>
+<polygon fill="black" stroke="black" points="322.24,-219.75 329.67,-212.2 319.16,-213.47 322.24,-219.75"></polygon>
+</g>
+<!-- Walkable
+Streetscape -->
+<g id="node10" class="node">
+<title>Walkable
+Streetscape</title>
+<polygon fill="white" stroke="black" points="364.85,-41.4 285.36,-41.4 285.36,-0.2 364.85,-0.2 364.85,-41.4"></polygon>
+<text text-anchor="middle" x="325.1" y="-25" font-family="Times,serif" font-size="14.00">Walkable</text>
+<text text-anchor="middle" x="325.1" y="-8.2" font-family="Times,serif" font-size="14.00">Streetscape</text>
+</g>
+<!-- Street
+As
+Center&#45;&gt;Walkable
+Streetscape -->
+<g id="edge11" class="edge">
+<title>Street
+As
+Center-&gt;Walkable
+Streetscape</title>
+<path fill="none" stroke="black" d="M187.29,-257.78C200.2,-215.91 227.99,-136.27 268.1,-77.6 275.25,-67.15 284.56,-57.05 293.57,-48.38"></path>
+<polygon fill="black" stroke="black" points="296.08,-50.83 301.03,-41.46 291.32,-45.7 296.08,-50.83"></polygon>
+</g>
+<!-- Perimeter
+Block -->
+<g id="node11" class="node">
+<title>Perimeter
+Block</title>
+<polygon fill="white" stroke="black" points="99.52,-213.4 28.68,-213.4 28.68,-172.2 99.52,-172.2 99.52,-213.4"></polygon>
+<text text-anchor="middle" x="64.1" y="-197" font-family="Times,serif" font-size="14.00">Perimeter</text>
+<text text-anchor="middle" x="64.1" y="-180.2" font-family="Times,serif" font-size="14.00">Block</text>
+</g>
+<!-- Street
+As
+Center&#45;&gt;Perimeter
+Block -->
+<g id="edge12" class="edge">
+<title>Street
+As
+Center-&gt;Perimeter
+Block</title>
+<path fill="none" stroke="black" d="M151.85,-264.3C135.41,-251.09 114.36,-234.18 97,-220.23"></path>
+<polygon fill="black" stroke="black" points="98.8,-217.19 88.81,-213.65 94.41,-222.64 98.8,-217.19"></polygon>
+</g>
+<!-- Perimeter
+Building -->
+<g id="node12" class="node">
+<title>Perimeter
+Building</title>
+<polygon fill="white" stroke="black" points="223.52,-41.4 152.68,-41.4 152.68,-0.2 223.52,-0.2 223.52,-41.4"></polygon>
+<text text-anchor="middle" x="188.1" y="-25" font-family="Times,serif" font-size="14.00">Perimeter</text>
+<text text-anchor="middle" x="188.1" y="-8.2" font-family="Times,serif" font-size="14.00">Building</text>
+</g>
+<!-- Street
+As
+Center&#45;&gt;Perimeter
+Building -->
+<g id="edge13" class="edge">
+<title>Street
+As
+Center-&gt;Perimeter
+Building</title>
+<path fill="none" stroke="black" d="M166.3,-257.83C149.72,-217.03 125.3,-139.85 146.1,-77.6 149.45,-67.6 155.37,-57.95 161.73,-49.57"></path>
+<polygon fill="black" stroke="black" points="164.58,-51.61 168.16,-41.64 159.14,-47.2 164.58,-51.61"></polygon>
+</g>
+<!-- Pedestrian
+Sanctuary&#45;&gt;Neighborhood
+Square -->
+<g id="edge23" class="edge">
+<title>Pedestrian
+Sanctuary-&gt;Neighborhood
+Square</title>
+<path fill="none" stroke="black" d="M357.15,-171.89C351.92,-161.43 345.41,-148.41 339.63,-136.85"></path>
+<polygon fill="black" stroke="black" points="342.59,-134.94 334.99,-127.56 336.33,-138.07 342.59,-134.94"></polygon>
+</g>
+<!-- Pedestrian
+Sanctuary&#45;&gt;Neighborhood
+Park -->
+<g id="edge22" class="edge">
+<title>Pedestrian
+Sanctuary-&gt;Neighborhood
+Park</title>
+<path fill="none" stroke="black" d="M402.74,-172.11C424.2,-160.25 451.7,-145.05 474.58,-132.4"></path>
+<polygon fill="black" stroke="black" points="476.37,-135.42 483.43,-127.52 472.98,-129.29 476.37,-135.42"></polygon>
+</g>
+<!-- Neighborhood
+Square&#45;&gt;Walkable
+Streetscape -->
+<g id="edge26" class="edge">
+<title>Neighborhood
+Square-&gt;Walkable
+Streetscape</title>
+<path fill="none" stroke="black" d="M325.1,-85.89C325.1,-75.75 325.1,-63.19 325.1,-51.89"></path>
+<polygon fill="black" stroke="black" points="328.6,-51.56 325.1,-41.56 321.6,-51.56 328.6,-51.56"></polygon>
+</g>
+<!-- Neighborhood
+Square&#45;&gt;Perimeter
+Building -->
+<g id="edge24" class="edge">
+<title>Neighborhood
+Square-&gt;Perimeter
+Building</title>
+<path fill="none" stroke="black" d="M292.98,-86.11C273.97,-74.45 249.69,-59.56 229.27,-47.04"></path>
+<polygon fill="black" stroke="black" points="230.85,-43.91 220.5,-41.66 227.19,-49.87 230.85,-43.91"></polygon>
+</g>
+<!-- Place
+Network -->
+<g id="node19" class="node">
+<title>Place
+Network</title>
+<polygon fill="white" stroke="black" points="454.58,-41.4 389.62,-41.4 389.62,-0.2 454.58,-0.2 454.58,-41.4"></polygon>
+<text text-anchor="middle" x="422.1" y="-25" font-family="Times,serif" font-size="14.00">Place</text>
+<text text-anchor="middle" x="422.1" y="-8.2" font-family="Times,serif" font-size="14.00">Network</text>
+</g>
+<!-- Neighborhood
+Square&#45;&gt;Place
+Network -->
+<g id="edge25" class="edge">
+<title>Neighborhood
+Square-&gt;Place
+Network</title>
+<path fill="none" stroke="black" d="M348.09,-85.89C361.02,-74.7 377.32,-60.58 391.34,-48.44"></path>
+<polygon fill="black" stroke="black" points="394.01,-50.76 399.28,-41.56 389.43,-45.46 394.01,-50.76"></polygon>
+</g>
+<!-- Neighborhood
+Park&#45;&gt;Place
+Network -->
+<g id="edge28" class="edge">
+<title>Neighborhood
+Park-&gt;Place
+Network</title>
+<path fill="none" stroke="black" d="M496.12,-85.89C483.19,-74.7 466.88,-60.58 452.87,-48.44"></path>
+<polygon fill="black" stroke="black" points="454.78,-45.46 444.93,-41.56 450.19,-50.76 454.78,-45.46"></polygon>
+</g>
+<!-- Urban
+Greenway -->
+<g id="node6" class="node">
+<title>Urban
+Greenway</title>
+<polygon fill="white" stroke="black" points="247.62,-402.2 174.58,-402.2 174.58,-361 247.62,-361 247.62,-402.2"></polygon>
+<text text-anchor="middle" x="211.1" y="-385.8" font-family="Times,serif" font-size="14.00">Urban</text>
+<text text-anchor="middle" x="211.1" y="-369" font-family="Times,serif" font-size="14.00">Greenway</text>
+</g>
+<!-- Urban
+Greenway&#45;&gt;Street
+As
+Center -->
+<g id="edge5" class="edge">
+<title>Urban
+Greenway-&gt;Street
+As
+Center</title>
+<path fill="none" stroke="black" d="M204.16,-360.55C200.68,-350.52 196.36,-338.03 192.29,-326.26"></path>
+<polygon fill="black" stroke="black" points="195.53,-324.93 188.95,-316.62 188.91,-327.22 195.53,-324.93"></polygon>
+</g>
+<!-- Multi&#45;Way
+Boulevard -->
+<g id="node7" class="node">
+<title>Multi-Way
+Boulevard</title>
+<polygon fill="white" stroke="black" points="78.31,-402.2 -0.1,-402.2 -0.1,-361 78.31,-361 78.31,-402.2"></polygon>
+<text text-anchor="middle" x="39.1" y="-385.8" font-family="Times,serif" font-size="14.00">Multi-Way</text>
+<text text-anchor="middle" x="39.1" y="-369" font-family="Times,serif" font-size="14.00">Boulevard</text>
+</g>
+<!-- Multi&#45;Way
+Boulevard&#45;&gt;Street
+As
+Center -->
+<g id="edge6" class="edge">
+<title>Multi-Way
+Boulevard-&gt;Street
+As
+Center</title>
+<path fill="none" stroke="black" d="M69.14,-360.78C90.94,-346.39 120.52,-326.87 143.5,-311.69"></path>
+<polygon fill="black" stroke="black" points="145.55,-314.54 151.96,-306.11 141.69,-308.7 145.55,-314.54"></polygon>
+</g>
+<!-- Avenue -->
+<g id="node8" class="node">
+<title>Avenue</title>
+<polygon fill="white" stroke="black" points="155.64,-399.6 96.57,-399.6 96.57,-363.6 155.64,-363.6 155.64,-399.6"></polygon>
+<text text-anchor="middle" x="126.1" y="-377.4" font-family="Times,serif" font-size="14.00">Avenue</text>
+</g>
+<!-- Avenue&#45;&gt;Street
+As
+Center -->
+<g id="edge7" class="edge">
+<title>Avenue-&gt;Street
+As
+Center</title>
+<path fill="none" stroke="black" d="M136.07,-363.22C142.16,-352.6 150.19,-338.6 157.67,-325.57"></path>
+<polygon fill="black" stroke="black" points="160.78,-327.18 162.72,-316.76 154.71,-323.69 160.78,-327.18"></polygon>
+</g>
+<!-- Street
+Patterns -->
+<g id="node9" class="node">
+<title>Street
+Patterns</title>
+<polygon fill="bisque" stroke="black" points="198.7,-479.8 137.5,-479.8 137.5,-438.6 198.7,-438.6 198.7,-479.8"></polygon>
+<text text-anchor="middle" x="168.1" y="-463.4" font-family="Times,serif" font-size="14.00">Street</text>
+<text text-anchor="middle" x="168.1" y="-446.6" font-family="Times,serif" font-size="14.00">Patterns</text>
+</g>
+<!-- Street
+Patterns&#45;&gt;Urban
+Greenway -->
+<g id="edge8" class="edge">
+<title>Street
+Patterns-&gt;Urban
+Greenway</title>
+<path fill="none" stroke="black" d="M179.4,-438.34C184.14,-430 189.74,-420.15 194.91,-411.07"></path>
+<polygon fill="black" stroke="black" points="197.98,-412.75 199.88,-402.33 191.89,-409.29 197.98,-412.75"></polygon>
+</g>
+<!-- Street
+Patterns&#45;&gt;Multi&#45;Way
+Boulevard -->
+<g id="edge9" class="edge">
+<title>Street
+Patterns-&gt;Multi-Way
+Boulevard</title>
+<path fill="none" stroke="black" d="M137.53,-440.28C120.76,-430.45 99.7,-418.11 81.37,-407.37"></path>
+<polygon fill="black" stroke="black" points="83.02,-404.28 72.63,-402.25 79.48,-410.32 83.02,-404.28"></polygon>
+</g>
+<!-- Street
+Patterns&#45;&gt;Avenue -->
+<g id="edge10" class="edge">
+<title>Street
+Patterns-&gt;Avenue</title>
+<path fill="none" stroke="black" d="M157.07,-438.34C152.06,-429.32 146.06,-418.53 140.69,-408.85"></path>
+<polygon fill="black" stroke="black" points="143.69,-407.06 135.78,-400.02 137.58,-410.46 143.69,-407.06"></polygon>
+</g>
+<!-- Shared
+Space
+Lane -->
+<g id="node17" class="node">
+<title>Shared
+Space
+Lane</title>
+<polygon fill="white" stroke="black" points="408.48,-316.6 353.73,-316.6 353.73,-257.8 408.48,-257.8 408.48,-316.6"></polygon>
+<text text-anchor="middle" x="381.1" y="-299.8" font-family="Times,serif" font-size="14.00">Shared</text>
+<text text-anchor="middle" x="381.1" y="-283" font-family="Times,serif" font-size="14.00">Space</text>
+<text text-anchor="middle" x="381.1" y="-266.2" font-family="Times,serif" font-size="14.00">Lane</text>
+</g>
+<!-- Street
+Patterns&#45;&gt;Shared
+Space
+Lane -->
+<g id="edge21" class="edge">
+<title>Street
+Patterns-&gt;Shared
+Space
+Lane</title>
+<path fill="none" stroke="black" d="M198.81,-454.07C249.94,-446.51 349.1,-428.79 371.1,-402.4 388.39,-381.67 390.16,-350.85 388.01,-326.45"></path>
+<polygon fill="black" stroke="black" points="391.48,-325.98 386.89,-316.44 384.53,-326.77 391.48,-325.98"></polygon>
+</g>
+<!-- Public
+Space
+Patterns -->
+<g id="node13" class="node">
+<title>Public
+Space
+Patterns</title>
+<polygon fill="bisque" stroke="black" points="452.7,-136.2 391.5,-136.2 391.5,-77.4 452.7,-77.4 452.7,-136.2"></polygon>
+<text text-anchor="middle" x="422.1" y="-119.4" font-family="Times,serif" font-size="14.00">Public</text>
+<text text-anchor="middle" x="422.1" y="-102.6" font-family="Times,serif" font-size="14.00">Space</text>
+<text text-anchor="middle" x="422.1" y="-85.8" font-family="Times,serif" font-size="14.00">Patterns</text>
+</g>
+<!-- Public
+Space
+Patterns&#45;&gt;Walkable
+Streetscape -->
+<g id="edge14" class="edge">
+<title>Public
+Space
+Patterns-&gt;Walkable
+Streetscape</title>
+<path fill="none" stroke="black" d="M391.41,-79.22C379.96,-69.3 366.96,-58.05 355.53,-48.15"></path>
+<polygon fill="black" stroke="black" points="357.76,-45.45 347.91,-41.55 353.17,-50.74 357.76,-45.45"></polygon>
+</g>
+<!-- Public
+Space
+Patterns&#45;&gt;Place
+Network -->
+<g id="edge27" class="edge">
+<title>Public
+Space
+Patterns-&gt;Place
+Network</title>
+<path fill="none" stroke="black" d="M422.1,-77.36C422.1,-69.06 422.1,-59.97 422.1,-51.59"></path>
+<polygon fill="black" stroke="black" points="425.6,-51.47 422.1,-41.47 418.6,-51.47 425.6,-51.47"></polygon>
+</g>
+<!-- Block
+And
+Plot
+Patterns -->
+<g id="node14" class="node">
+<title>Block
+And
+Plot
+Patterns</title>
+<polygon fill="bisque" stroke="black" points="94.7,-324.9 33.5,-324.9 33.5,-249.5 94.7,-249.5 94.7,-324.9"></polygon>
+<text text-anchor="middle" x="64.1" y="-308.2" font-family="Times,serif" font-size="14.00">Block</text>
+<text text-anchor="middle" x="64.1" y="-291.4" font-family="Times,serif" font-size="14.00">And</text>
+<text text-anchor="middle" x="64.1" y="-274.6" font-family="Times,serif" font-size="14.00">Plot</text>
+<text text-anchor="middle" x="64.1" y="-257.8" font-family="Times,serif" font-size="14.00">Patterns</text>
+</g>
+<!-- Block
+And
+Plot
+Patterns&#45;&gt;Perimeter
+Block -->
+<g id="edge15" class="edge">
+<title>Block
+And
+Plot
+Patterns-&gt;Perimeter
+Block</title>
+<path fill="none" stroke="black" d="M64.1,-249.42C64.1,-240.88 64.1,-231.89 64.1,-223.69"></path>
+<polygon fill="black" stroke="black" points="67.6,-223.47 64.1,-213.47 60.6,-223.47 67.6,-223.47"></polygon>
+</g>
+<!-- Building
+Patterns -->
+<g id="node15" class="node">
+<title>Building
+Patterns</title>
+<polygon fill="bisque" stroke="black" points="220.61,-127.4 155.59,-127.4 155.59,-86.2 220.61,-86.2 220.61,-127.4"></polygon>
+<text text-anchor="middle" x="188.1" y="-111" font-family="Times,serif" font-size="14.00">Building</text>
+<text text-anchor="middle" x="188.1" y="-94.2" font-family="Times,serif" font-size="14.00">Patterns</text>
+</g>
+<!-- Building
+Patterns&#45;&gt;Perimeter
+Building -->
+<g id="edge16" class="edge">
+<title>Building
+Patterns-&gt;Perimeter
+Building</title>
+<path fill="none" stroke="black" d="M188.1,-85.89C188.1,-75.75 188.1,-63.19 188.1,-51.89"></path>
+<polygon fill="black" stroke="black" points="191.6,-51.56 188.1,-41.56 184.6,-51.56 191.6,-51.56"></polygon>
+</g>
+<!-- 400M
+Through
+Street
+Network -->
+<g id="node16" class="node">
+<title>400M
+Through
+Street
+Network</title>
+<polygon fill="white" stroke="black" points="491.58,-324.9 426.62,-324.9 426.62,-249.5 491.58,-249.5 491.58,-324.9"></polygon>
+<text text-anchor="middle" x="459.1" y="-308.2" font-family="Times,serif" font-size="14.00">400M</text>
+<text text-anchor="middle" x="459.1" y="-291.4" font-family="Times,serif" font-size="14.00">Through</text>
+<text text-anchor="middle" x="459.1" y="-274.6" font-family="Times,serif" font-size="14.00">Street</text>
+<text text-anchor="middle" x="459.1" y="-257.8" font-family="Times,serif" font-size="14.00">Network</text>
+</g>
+<!-- 400M
+Through
+Street
+Network&#45;&gt;Pedestrian
+Sanctuary -->
+<g id="edge17" class="edge">
+<title>400M
+Through
+Street
+Network-&gt;Pedestrian
+Sanctuary</title>
+<path fill="none" stroke="black" d="M426.41,-253.36C415.77,-242.68 404.09,-230.95 393.93,-220.75"></path>
+<polygon fill="black" stroke="black" points="396.38,-218.24 386.84,-213.62 391.41,-223.18 396.38,-218.24"></polygon>
+</g>
+<!-- Shared
+Space
+Lane&#45;&gt;Pedestrian
+Sanctuary -->
+<g id="edge19" class="edge">
+<title>Shared
+Space
+Lane-&gt;Pedestrian
+Sanctuary</title>
+<path fill="none" stroke="black" d="M376.83,-257.97C375.18,-247.12 373.3,-234.69 371.63,-223.68"></path>
+<polygon fill="black" stroke="black" points="375.07,-223.02 370.11,-213.65 368.15,-224.07 375.07,-223.02"></polygon>
+</g>
+<!-- Regional
+Patterns -->
+<g id="node18" class="node">
+<title>Regional
+Patterns</title>
+<polygon fill="bisque" stroke="black" points="492.15,-402.2 426.05,-402.2 426.05,-361 492.15,-361 492.15,-402.2"></polygon>
+<text text-anchor="middle" x="459.1" y="-385.8" font-family="Times,serif" font-size="14.00">Regional</text>
+<text text-anchor="middle" x="459.1" y="-369" font-family="Times,serif" font-size="14.00">Patterns</text>
+</g>
+<!-- Regional
+Patterns&#45;&gt;400M
+Through
+Street
+Network -->
+<g id="edge20" class="edge">
+<title>Regional
+Patterns-&gt;400M
+Through
+Street
+Network</title>
+<path fill="none" stroke="black" d="M459.1,-360.55C459.1,-352.99 459.1,-344.04 459.1,-335.06"></path>
+<polygon fill="black" stroke="black" points="462.6,-334.97 459.1,-324.97 455.6,-334.97 462.6,-334.97"></polygon>
+</g>
+</g>
+</svg>

@@ -16,6 +16,7 @@
     <img id="show" href="#"></img>
     <script type="module">
         import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
+        import * as oc from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/examples/jsm/controls/OrbitControls.js';
 
         // http://found.ward.bay.wiki.org/threejs-fundamentals.html
 
@@ -25,18 +26,24 @@
         const renderer = new THREE.WebGLRenderer({ canvas });
         window.renderer = renderer;
 
-        const fov = 50;
-        const aspect = 2.5;  // the canvas default
-        const near = 0.1;
-        const far = 5;
-        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        camera.position.z = 4;
+        // const fov = 50;
+        // const aspect = 2.5;  // the canvas default
+        // const near = 0.1;
+        // const far = 5;
+        // const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 5);
+        // camera.position.z = 200;
+        var controls = new oc.OrbitControls(camera, renderer.domElement);
+        //controls.update() must be called after any manual changes to the camera's transform
+        camera.position.set(0, 0, 3);
+        controls.update();
+
         const scene = new THREE.Scene();
 
         {
             const color = 0xFFFFFF;
             const intensity = 1;
-            const light = new THREE.AmbientLight(color, intensity);
+            const light = new THREE.DirectionalLight(color, intensity);
             light.position.set(-1, 2, 4);
             scene.add(light);
         }
@@ -51,11 +58,10 @@
             var material = [
                 new THREE.MeshBasicMaterial({ map: loader.load("metadata-editor.svg") }),
                 new THREE.MeshBasicMaterial({ map: loader.load("index.png") }),
-                // facing
-                new THREE.MeshBasicMaterial({ map: loader.load("metadata-editor.svg") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("index.png") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("metadata-editor.svg") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("index.png") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("One Wiki Hosting Guide.svg") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("Outpost Thinking.svg") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("neighborhood-patterns.svg") }),
+                new THREE.MeshBasicMaterial({ map: loader.load("special-use-patterns.svg") }),
             ];
             const cube = new THREE.Mesh(geometry, material);
             scene.add(cube);
@@ -76,16 +82,20 @@
         function render(time) {
             time *= 0.001;  // convert time to seconds
 
-            cubes.forEach((cube, idx) => {
-                const speed = 1 + 0.5 * .1;
-                const rot = time * speed;
-                // cube.rotation.x = rot;
-                cube.rotation.y = rot;
-            });
+            // cubes.forEach((cube, idx) => {
+            //     const speed = 1 + 0.5 * .1;
+            //     const rot = time * speed;
+            //     // cube.rotation.x = rot;
+            //     cube.rotation.y = rot;
+            // });
+
+            requestAnimationFrame(render);
+
+            // required if controls.enableDamping or controls.autoRotate are set to true
+            controls.update();
 
             renderer.render(scene, camera);
 
-            requestAnimationFrame(render);
             // canvas.toBlob((blob) => {
             //     socket.send(blob);
             // });
@@ -94,8 +104,6 @@
             // console.log(ms);
         }
         requestAnimationFrame(render);
-
-
     </script>
 </body>
 

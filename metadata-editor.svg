@@ -1,0 +1,310 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="681pt" height="538pt" viewBox="0.00 0.00 680.56 537.60" style="width: 100%; height: auto;">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 533.6)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-533.6 676.56,-533.6 676.56,4 -4,4"></polygon>
+<!-- restore -->
+<g id="node1" class="node">
+<title>restore</title>
+<polygon fill="bisque" stroke="black" points="667.15,-371.6 612.98,-371.6 612.98,-335.6 667.15,-335.6 667.15,-371.6"></polygon>
+<text text-anchor="middle" x="640.07" y="-349.4" font-family="Times,serif" font-size="14.00">restore</text>
+</g>
+<!-- gotohash -->
+<g id="node2" class="node">
+<title>gotohash</title>
+<polygon fill="bisque" stroke="black" points="627.12,-277.2 561.01,-277.2 561.01,-241.2 627.12,-241.2 627.12,-277.2"></polygon>
+<text text-anchor="middle" x="594.07" y="-255" font-family="Times,serif" font-size="14.00">gotohash</text>
+</g>
+<!-- restore&#45;&gt;gotohash -->
+<g id="edge1" class="edge">
+<title>restore-&gt;gotohash</title>
+<path fill="none" stroke="black" d="M631.41,-335.22C624.6,-321.54 615,-302.25 607.23,-286.65"></path>
+<polygon fill="black" stroke="black" points="610.27,-284.89 602.68,-277.5 604,-288.01 610.27,-284.89"></polygon>
+</g>
+<!-- refresh -->
+<g id="node3" class="node">
+<title>refresh</title>
+<polygon fill="bisque" stroke="black" points="359.42,-185.6 304.71,-185.6 304.71,-149.6 359.42,-149.6 359.42,-185.6"></polygon>
+<text text-anchor="middle" x="332.07" y="-163.4" font-family="Times,serif" font-size="14.00">refresh</text>
+</g>
+<!-- gotohash&#45;&gt;refresh -->
+<g id="edge2" class="edge">
+<title>gotohash-&gt;refresh</title>
+<path fill="none" stroke="black" d="M575.63,-240.91C567.42,-234.02 557.3,-226.57 547.07,-221.6 488.63,-193.25 413.68,-179.24 369.46,-172.98"></path>
+<polygon fill="black" stroke="black" points="369.83,-169.5 359.45,-171.63 368.89,-176.44 369.83,-169.5"></polygon>
+</g>
+<!-- showimage -->
+<g id="node4" class="node">
+<title>showimage</title>
+<polygon fill="bisque" stroke="black" points="203.83,-110.8 124.3,-110.8 124.3,-74.8 203.83,-74.8 203.83,-110.8"></polygon>
+<text text-anchor="middle" x="164.07" y="-88.6" font-family="Times,serif" font-size="14.00">showimage</text>
+</g>
+<!-- refresh&#45;&gt;showimage -->
+<g id="edge3" class="edge">
+<title>refresh-&gt;showimage</title>
+<path fill="none" stroke="black" d="M304.7,-154.74C279.87,-143.98 242.67,-127.86 212.77,-114.9"></path>
+<polygon fill="black" stroke="black" points="213.91,-111.58 203.34,-110.82 211.13,-118.01 213.91,-111.58"></polygon>
+</g>
+<!-- showdot -->
+<g id="node6" class="node">
+<title>showdot</title>
+<polygon fill="bisque" stroke="black" points="364.01,-110.8 300.12,-110.8 300.12,-74.8 364.01,-74.8 364.01,-110.8"></polygon>
+<text text-anchor="middle" x="332.07" y="-88.6" font-family="Times,serif" font-size="14.00">showdot</text>
+</g>
+<!-- refresh&#45;&gt;showdot -->
+<g id="edge5" class="edge">
+<title>refresh-&gt;showdot</title>
+<path fill="none" stroke="black" d="M332.07,-149.35C332.07,-140.92 332.07,-130.57 332.07,-121.1"></path>
+<polygon fill="black" stroke="black" points="335.57,-120.93 332.07,-110.93 328.57,-120.93 335.57,-120.93"></polygon>
+</g>
+<!-- current -->
+<g id="node7" class="node">
+<title>current</title>
+<polygon fill="bisque" stroke="black" points="509.71,-110.8 454.42,-110.8 454.42,-74.8 509.71,-74.8 509.71,-110.8"></polygon>
+<text text-anchor="middle" x="482.07" y="-88.6" font-family="Times,serif" font-size="14.00">current</text>
+</g>
+<!-- refresh&#45;&gt;current -->
+<g id="edge6" class="edge">
+<title>refresh-&gt;current</title>
+<path fill="none" stroke="black" d="M359.66,-154.15C382.66,-143.66 416.21,-128.08 445.07,-113.6 445.16,-113.55 445.25,-113.51 445.35,-113.46"></path>
+<polygon fill="black" stroke="black" points="446.97,-116.56 454.27,-108.88 443.77,-110.33 446.97,-116.56"></polygon>
+</g>
+<!-- getimage -->
+<g id="node5" class="node">
+<title>getimage</title>
+<polygon fill="bisque" stroke="black" points="173.88,-36 106.25,-36 106.25,0 173.88,0 173.88,-36"></polygon>
+<text text-anchor="middle" x="140.07" y="-13.8" font-family="Times,serif" font-size="14.00">getimage</text>
+</g>
+<!-- showimage&#45;&gt;getimage -->
+<g id="edge4" class="edge">
+<title>showimage-&gt;getimage</title>
+<path fill="none" stroke="black" d="M158.38,-74.55C155.54,-65.93 152.04,-55.32 148.86,-45.69"></path>
+<polygon fill="black" stroke="black" points="152.17,-44.53 145.71,-36.13 145.52,-46.72 152.17,-44.53"></polygon>
+</g>
+<!-- image2screen -->
+<g id="node9" class="node">
+<title>image2screen</title>
+<polygon fill="bisque" stroke="black" points="321.53,-36 228.61,-36 228.61,0 321.53,0 321.53,-36"></polygon>
+<text text-anchor="middle" x="275.07" y="-13.8" font-family="Times,serif" font-size="14.00">image2screen</text>
+</g>
+<!-- showdot&#45;&gt;image2screen -->
+<g id="edge8" class="edge">
+<title>showdot-&gt;image2screen</title>
+<path fill="none" stroke="black" d="M318.56,-74.55C311.46,-65.48 302.63,-54.2 294.78,-44.18"></path>
+<polygon fill="black" stroke="black" points="297.4,-41.84 288.48,-36.13 291.89,-46.16 297.4,-41.84"></polygon>
+</g>
+<!-- getmetadata -->
+<g id="node8" class="node">
+<title>getmetadata</title>
+<polygon fill="bisque" stroke="black" points="486.7,-36 403.43,-36 403.43,0 486.7,0 486.7,-36"></polygon>
+<text text-anchor="middle" x="445.07" y="-13.8" font-family="Times,serif" font-size="14.00">getmetadata</text>
+</g>
+<!-- current&#45;&gt;getmetadata -->
+<g id="edge7" class="edge">
+<title>current-&gt;getmetadata</title>
+<path fill="none" stroke="black" d="M473.3,-74.55C468.83,-65.75 463.3,-54.87 458.32,-45.08"></path>
+<polygon fill="black" stroke="black" points="461.42,-43.46 453.77,-36.13 455.18,-46.63 461.42,-43.46"></polygon>
+</g>
+<!-- screen2image -->
+<g id="node10" class="node">
+<title>screen2image</title>
+<polygon fill="bisque" stroke="black" points="235.53,-277.2 142.61,-277.2 142.61,-241.2 235.53,-241.2 235.53,-277.2"></polygon>
+<text text-anchor="middle" x="189.07" y="-255" font-family="Times,serif" font-size="14.00">screen2image</text>
+</g>
+<!-- saveit -->
+<g id="node11" class="node">
+<title>saveit</title>
+<polygon fill="bisque" stroke="black" points="141.07,-371.6 87.07,-371.6 87.07,-335.6 141.07,-335.6 141.07,-371.6"></polygon>
+<text text-anchor="middle" x="114.07" y="-349.4" font-family="Times,serif" font-size="14.00">saveit</text>
+</g>
+<!-- saveit&#45;&gt;refresh -->
+<g id="edge9" class="edge">
+<title>saveit-&gt;refresh</title>
+<path fill="none" stroke="black" d="M111.28,-335.28C107.87,-307.6 105.67,-253.31 134.07,-221.6 155.28,-197.92 243.35,-181.47 294.6,-173.7"></path>
+<polygon fill="black" stroke="black" points="295.26,-177.14 304.64,-172.22 294.23,-170.22 295.26,-177.14"></polygon>
+</g>
+<!-- saveit&#45;&gt;screen2image -->
+<g id="edge10" class="edge">
+<title>saveit-&gt;screen2image</title>
+<path fill="none" stroke="black" d="M128.17,-335.22C139.59,-321.15 155.83,-301.15 168.66,-285.34"></path>
+<polygon fill="black" stroke="black" points="171.44,-287.47 175.02,-277.5 166,-283.06 171.44,-287.47"></polygon>
+</g>
+<!-- deleteit -->
+<g id="node12" class="node">
+<title>deleteit</title>
+<polygon fill="bisque" stroke="black" points="86.77,-277.2 29.36,-277.2 29.36,-241.2 86.77,-241.2 86.77,-277.2"></polygon>
+<text text-anchor="middle" x="58.07" y="-255" font-family="Times,serif" font-size="14.00">deleteit</text>
+</g>
+<!-- saveit&#45;&gt;deleteit -->
+<g id="edge21" class="edge">
+<title>saveit-&gt;deleteit</title>
+<path fill="none" stroke="black" d="M103.53,-335.22C95.16,-321.41 83.33,-301.88 73.83,-286.21"></path>
+<polygon fill="black" stroke="black" points="76.73,-284.24 68.55,-277.5 70.74,-287.87 76.73,-284.24"></polygon>
+</g>
+<!-- deleteit&#45;&gt;refresh -->
+<g id="edge11" class="edge">
+<title>deleteit-&gt;refresh</title>
+<path fill="none" stroke="black" d="M74.26,-241.16C81.8,-234.15 91.25,-226.53 101.07,-221.6 164.48,-189.76 247.29,-176.76 294.58,-171.68"></path>
+<polygon fill="black" stroke="black" points="295.08,-175.14 304.68,-170.65 294.38,-168.18 295.08,-175.14"></polygon>
+</g>
+<!-- window\nonhashchange -->
+<g id="node13" class="node">
+<title>window\nonhashchange</title>
+<polygon fill="white" stroke="black" points="594.87,-374.2 499.26,-374.2 499.26,-333 594.87,-333 594.87,-374.2"></polygon>
+<text text-anchor="middle" x="547.07" y="-357.8" font-family="Times,serif" font-size="14.00">window</text>
+<text text-anchor="middle" x="547.07" y="-341" font-family="Times,serif" font-size="14.00">onhashchange</text>
+</g>
+<!-- window\nonhashchange&#45;&gt;gotohash -->
+<g id="edge12" class="edge">
+<title>window\nonhashchange-&gt;gotohash</title>
+<path fill="none" stroke="black" d="M557.26,-332.55C564.13,-319.05 573.25,-301.12 580.7,-286.48"></path>
+<polygon fill="black" stroke="black" points="583.89,-287.92 585.31,-277.42 577.66,-284.74 583.89,-287.92"></polygon>
+</g>
+<!-- metadata\ndownload\nerase -->
+<g id="node14" class="node">
+<title>metadata\ndownload\nerase</title>
+<polygon fill="white" stroke="black" points="324.78,-288.6 253.35,-288.6 253.35,-229.8 324.78,-229.8 324.78,-288.6"></polygon>
+<text text-anchor="middle" x="289.07" y="-271.8" font-family="Times,serif" font-size="14.00">metadata</text>
+<text text-anchor="middle" x="289.07" y="-255" font-family="Times,serif" font-size="14.00">download</text>
+<text text-anchor="middle" x="289.07" y="-238.2" font-family="Times,serif" font-size="14.00">erase</text>
+</g>
+<!-- metadata\ndownload\nerase&#45;&gt;refresh -->
+<g id="edge13" class="edge">
+<title>metadata\ndownload\nerase-&gt;refresh</title>
+<path fill="none" stroke="black" d="M302.67,-229.85C308.04,-218.67 314.17,-205.9 319.43,-194.92"></path>
+<polygon fill="black" stroke="black" points="322.63,-196.35 323.8,-185.82 316.32,-193.32 322.63,-196.35"></polygon>
+</g>
+<!-- metadata\nonclick -->
+<g id="node15" class="node">
+<title>metadata\nonclick</title>
+<polygon fill="white" stroke="black" points="409.1,-279.8 343.03,-279.8 343.03,-238.6 409.1,-238.6 409.1,-279.8"></polygon>
+<text text-anchor="middle" x="376.07" y="-263.4" font-family="Times,serif" font-size="14.00">metadata</text>
+<text text-anchor="middle" x="376.07" y="-246.6" font-family="Times,serif" font-size="14.00">onclick</text>
+</g>
+<!-- metadata\nonclick&#45;&gt;refresh -->
+<g id="edge14" class="edge">
+<title>metadata\nonclick-&gt;refresh</title>
+<path fill="none" stroke="black" d="M366.3,-238.31C360.01,-225.5 351.75,-208.69 344.93,-194.79"></path>
+<polygon fill="black" stroke="black" points="348.02,-193.15 340.47,-185.71 341.74,-196.23 348.02,-193.15"></polygon>
+</g>
+<!-- search\nkeyup\nmouseover\nclick -->
+<g id="node16" class="node">
+<title>search\nkeyup\nmouseover\nclick</title>
+<polygon fill="white" stroke="black" points="504.99,-296.9 427.14,-296.9 427.14,-221.5 504.99,-221.5 504.99,-296.9"></polygon>
+<text text-anchor="middle" x="466.07" y="-280.2" font-family="Times,serif" font-size="14.00">search</text>
+<text text-anchor="middle" x="466.07" y="-263.4" font-family="Times,serif" font-size="14.00">keyup</text>
+<text text-anchor="middle" x="466.07" y="-246.6" font-family="Times,serif" font-size="14.00">mouseover</text>
+<text text-anchor="middle" x="466.07" y="-229.8" font-family="Times,serif" font-size="14.00">click</text>
+</g>
+<!-- search\nkeyup\nmouseover\nclick&#45;&gt;refresh -->
+<g id="edge15" class="edge">
+<title>search\nkeyup\nmouseover\nclick-&gt;refresh</title>
+<path fill="none" stroke="black" d="M427.27,-228.11C424.18,-225.87 421.09,-223.68 418.07,-221.6 402.11,-210.64 383.94,-199.28 368.41,-189.91"></path>
+<polygon fill="black" stroke="black" points="370,-186.77 359.62,-184.63 366.4,-192.78 370,-186.77"></polygon>
+</g>
+<!-- draw\nonclick -->
+<g id="node17" class="node">
+<title>draw\nonclick</title>
+<polygon fill="white" stroke="black" points="217.78,-374.2 160.36,-374.2 160.36,-333 217.78,-333 217.78,-374.2"></polygon>
+<text text-anchor="middle" x="189.07" y="-357.8" font-family="Times,serif" font-size="14.00">draw</text>
+<text text-anchor="middle" x="189.07" y="-341" font-family="Times,serif" font-size="14.00">onclick</text>
+</g>
+<!-- draw\nonclick&#45;&gt;refresh -->
+<g id="edge16" class="edge">
+<title>draw\nonclick-&gt;refresh</title>
+<path fill="none" stroke="black" d="M217.85,-352.19C290.14,-350.48 476.2,-341.72 514.07,-296.8 535.61,-271.25 534.12,-248.33 514.07,-221.6 496.72,-198.49 417.53,-182.14 369.5,-174.16"></path>
+<polygon fill="black" stroke="black" points="369.9,-170.68 359.47,-172.54 368.78,-177.59 369.9,-170.68"></polygon>
+</g>
+<!-- draw\nonclick&#45;&gt;screen2image -->
+<g id="edge17" class="edge">
+<title>draw\nonclick-&gt;screen2image</title>
+<path fill="none" stroke="black" d="M189.07,-332.55C189.07,-319.44 189.07,-302.14 189.07,-287.74"></path>
+<polygon fill="black" stroke="black" points="192.57,-287.42 189.07,-277.42 185.57,-287.42 192.57,-287.42"></polygon>
+</g>
+<!-- dot\nonclick -->
+<g id="node18" class="node">
+<title>dot\nonclick</title>
+<polygon fill="white" stroke="black" points="86.78,-529.4 29.36,-529.4 29.36,-488.2 86.78,-488.2 86.78,-529.4"></polygon>
+<text text-anchor="middle" x="58.07" y="-513" font-family="Times,serif" font-size="14.00">dot</text>
+<text text-anchor="middle" x="58.07" y="-496.2" font-family="Times,serif" font-size="14.00">onclick</text>
+</g>
+<!-- describe\nclose -->
+<g id="node19" class="node">
+<title>describe\nclose</title>
+<polygon fill="white" stroke="black" points="89.21,-451.8 26.93,-451.8 26.93,-410.6 89.21,-410.6 89.21,-451.8"></polygon>
+<text text-anchor="middle" x="58.07" y="-435.4" font-family="Times,serif" font-size="14.00">describe</text>
+<text text-anchor="middle" x="58.07" y="-418.6" font-family="Times,serif" font-size="14.00">close</text>
+</g>
+<!-- dot\nonclick&#45;&gt;describe\nclose -->
+<g id="edge18" class="edge">
+<title>dot\nonclick-&gt;describe\nclose</title>
+<path fill="none" stroke="black" d="M58.07,-487.94C58.07,-480.04 58.07,-470.78 58.07,-462.1"></path>
+<polygon fill="black" stroke="black" points="61.57,-461.93 58.07,-451.93 54.57,-461.93 61.57,-461.93"></polygon>
+</g>
+<!-- describe\nclose&#45;&gt;refresh -->
+<g id="edge19" class="edge">
+<title>describe\nclose-&gt;refresh</title>
+<path fill="none" stroke="black" d="M45.3,-410.59C20.76,-370.19 -26.6,-276.87 20.07,-221.6 54.78,-180.49 219.02,-171.26 294.26,-169.19"></path>
+<polygon fill="black" stroke="black" points="294.77,-172.68 304.68,-168.94 294.6,-165.68 294.77,-172.68"></polygon>
+</g>
+<!-- describe\nclose&#45;&gt;saveit -->
+<g id="edge20" class="edge">
+<title>describe\nclose-&gt;saveit</title>
+<path fill="none" stroke="black" d="M72.78,-410.34C79.6,-401.13 87.78,-390.08 95.06,-380.26"></path>
+<polygon fill="black" stroke="black" points="98.03,-382.13 101.17,-372.02 92.4,-377.97 98.03,-382.13"></polygon>
+</g>
+<!-- describe\nclose&#45;&gt;deleteit -->
+<g id="edge22" class="edge">
+<title>describe\nclose-&gt;deleteit</title>
+<path fill="none" stroke="black" d="M58.07,-410.37C58.07,-380.02 58.07,-321.97 58.07,-287.61"></path>
+<polygon fill="black" stroke="black" points="61.57,-287.36 58.07,-277.36 54.57,-287.36 61.57,-287.36"></polygon>
+</g>
+<!-- window\nresize -->
+<g id="node20" class="node">
+<title>window\nresize</title>
+<polygon fill="white" stroke="black" points="282.67,-113.4 221.46,-113.4 221.46,-72.2 282.67,-72.2 282.67,-113.4"></polygon>
+<text text-anchor="middle" x="252.07" y="-97" font-family="Times,serif" font-size="14.00">window</text>
+<text text-anchor="middle" x="252.07" y="-80.2" font-family="Times,serif" font-size="14.00">resize</text>
+</g>
+<!-- window\nresize&#45;&gt;image2screen -->
+<g id="edge23" class="edge">
+<title>window\nresize-&gt;image2screen</title>
+<path fill="none" stroke="black" d="M258.35,-71.91C260.87,-63.92 263.82,-54.58 266.54,-46"></path>
+<polygon fill="black" stroke="black" points="269.9,-46.98 269.57,-36.39 263.22,-44.87 269.9,-46.98"></polygon>
+</g>
+<!-- index -->
+<g id="node21" class="node">
+<title>index</title>
+<ellipse fill="lightgreen" stroke="black" cx="640.07" cy="-431.2" rx="32.48" ry="18"></ellipse>
+<text text-anchor="middle" x="640.07" y="-427" font-family="Times,serif" font-size="14.00">index</text>
+</g>
+<!-- index&#45;&gt;restore -->
+<g id="edge24" class="edge">
+<title>index-&gt;restore</title>
+<path fill="none" stroke="black" d="M640.07,-413.05C640.07,-403.86 640.07,-392.34 640.07,-381.95"></path>
+<polygon fill="black" stroke="black" points="643.57,-381.69 640.07,-371.69 636.57,-381.69 643.57,-381.69"></polygon>
+</g>
+<!-- json -->
+<g id="node22" class="node">
+<title>json</title>
+<ellipse fill="lightgreen" stroke="black" cx="409.07" cy="-92.8" rx="27.27" ry="18"></ellipse>
+<text text-anchor="middle" x="409.07" y="-88.6" font-family="Times,serif" font-size="14.00">json</text>
+</g>
+<!-- json&#45;&gt;getmetadata -->
+<g id="edge25" class="edge">
+<title>json-&gt;getmetadata</title>
+<path fill="none" stroke="black" d="M417.23,-75.28C421.61,-66.44 427.09,-55.35 432.03,-45.35"></path>
+<polygon fill="black" stroke="black" points="435.26,-46.73 436.55,-36.21 428.98,-43.63 435.26,-46.73"></polygon>
+</g>
+<!-- png -->
+<g id="node23" class="node">
+<title>png</title>
+<ellipse fill="lightgreen" stroke="black" cx="79.07" cy="-92.8" rx="27" ry="18"></ellipse>
+<text text-anchor="middle" x="79.07" y="-88.6" font-family="Times,serif" font-size="14.00">png</text>
+</g>
+<!-- png&#45;&gt;getimage -->
+<g id="edge26" class="edge">
+<title>png-&gt;getimage</title>
+<path fill="none" stroke="black" d="M91.71,-76.72C99.6,-67.29 109.97,-54.92 119.07,-44.05"></path>
+<polygon fill="black" stroke="black" points="121.99,-46.02 125.73,-36.11 116.63,-41.52 121.99,-46.02"></polygon>
+</g>
+</g>
+</svg>
