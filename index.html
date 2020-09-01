@@ -35,7 +35,7 @@
         // camera.position.z = 200;
         var controls = new oc.OrbitControls(camera, renderer.domElement);
         //controls.update() must be called after any manual changes to the camera's transform
-        camera.position.set(0, 0, 3.5);
+        camera.position.set(0, 0, 7.5);
         controls.update();
 
         const scene = new THREE.Scene();
@@ -72,18 +72,54 @@
             return cube;
         }
 
-        function makePlane(z, image) {
-            let loader = new THREE.TextureLoader();
-            let plane_material = new THREE.MeshBasicMaterial({ map: loader.load(image), side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
-            var plane_geometry = new THREE.PlaneGeometry(2, 2);
-            var plane = new THREE.Mesh(plane_geometry, plane_material);
-            scene.add(plane);
-            plane.position.z = z;
+        window.textures = [];
+
+        function image_to_world(x, y, width, height) {
+            return [width / 200 / 2 - (x / 200),
+            -height / 200 / 2 + (y / 200)]
         }
 
-        makePlane(-1, "metadata-editor.svg");
-        makePlane(-0.5, "index.png");
-        makePlane(0.0, "One Wiki Hosting Guide.svg");
+        function makePlane(z, image) {
+            let loader = new THREE.TextureLoader();
+            let texture = loader.load(image, (texture) => {
+                let width = texture.image.width;
+                let height = texture.image.height;
+                let plane_material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
+                var plane_geometry = new THREE.PlaneGeometry(width / 200, height / 200);
+                var plane = new THREE.Mesh(plane_geometry, plane_material);
+                window.textures.push(texture);
+                scene.add(plane);
+                plane.position.z = z;
+                // plane.position.x = 0.0;
+                // plane.position.y = 0.0;
+                let plane_x, plane_y;
+                if (image.includes("special")) {
+                    [plane_x, plane_y] = image_to_world(88, 30, width, height);
+
+                } else {
+                    [plane_x, plane_y] = image_to_world(423, 132, width, height);
+                }
+                plane.position.x = plane_x;
+                plane.position.y = plane_y;
+            });
+        }
+
+        makePlane(0.0, "special-use-patterns.svg"); // 88, 30
+        makePlane(-0.5, "neighborhood-patterns.svg"); // 423, 132
+        var cube_geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(cube_geometry, material);
+        scene.add(cube);
+        cube.position.x = 0.0;
+        cube.position.y = 0.0;
+        cube.position.z = 0.0;
+        var cube_geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(cube_geometry, material);
+        scene.add(cube);
+        cube.position.x = 0.0;
+        cube.position.y = 0.0;
+        cube.position.z = -0.5;
         // ("Outpost Thinking.svg")
         // ("neighborhood-patterns.svg")
         // ("special-use-patterns.svg")
