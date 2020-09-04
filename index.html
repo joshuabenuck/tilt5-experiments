@@ -204,7 +204,7 @@
                         new THREE.Vector3(world_x2, world_y2, world_z2),
                         new THREE.Vector3(0, 0, 1)),
                     new THREE.Matrix4().makeRotationX(Math.PI / 2),
-                    new THREE.Matrix4().makeTranslation(0, -distance / 2, 0)
+                    new THREE.Matrix4().makeTranslation(0, -distance / 2, 0),
                 ];
                 let transform = new THREE.Matrix4();
                 for (let t of transforms) {
