@@ -80,6 +80,20 @@
             return [-w, -h]
         }
 
+        class World {
+            constructor() {
+                this.diagrams = [];
+            }
+
+            add(diagram) {
+                this.diagrams.push(diagram);
+            }
+
+            centerOn(diagram, x, y) {
+
+            }
+        }
+
         class Diagram {
             constructor(z, path) {
                 this.z = z;
@@ -126,6 +140,28 @@
             }
         }
 
+        class Dot {
+            contstructor(name, x, y) {
+                this.name = name;
+                this.x = x;
+                this.y = y;
+                this.image_x = x;
+                this.image_x = y;
+                this.world_x = x;
+                this.world_y = y;
+            }
+        }
+
+        function cube(wx, wy, wz) {
+            var cube_geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            var cube = new THREE.Mesh(cube_geometry, material);
+            scene.add(cube);
+            cube.position.x = wx;
+            cube.position.y = wy;
+            cube.position.z = wz;
+        }
+
         (async () => {
 
             let specialUse = new Diagram(0.0, "special-use-patterns.svg"); // 88, 30
@@ -137,24 +173,38 @@
             neighborhood.add("Neighborhood Patterns", 423, 132);
             // neighborhood.centerOn("Neighborhood Patterns");
             connect(specialUse, neighborhood, "Neighborhood Patterns");
+            // var geometry = new THREE.CylinderGeometry(0.1, 0.1, 2, 32);
+            // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            // var cylinder = new THREE.Mesh(geometry, material);
+            // scene.add(cylinder);
 
             function connect(from, to, dot) {
                 let [x1, y1, _c1] = from.dots[dot];
+                let [world_x1, world_y1] = image_to_world(x1, y1, from.width, from.height);
                 let [x2, y2, _c2] = to.dots[dot];
-                let z1 = from.z;
-                let z2 = to.z;
-                let x_comp = Math.pow((x2 - x1), 2);
-                let y_comp = Math.pow((y2 - y1), 2);
-                let z_comp = Math.pow((z2 - z1), 2);
-                let distance = Math.sqrt(x_comp + y_comp + z_comp);
-                var geometry = new THREE.CylinderGeometry(50, 50, 20, 32);
-                var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-                var cylinder = new THREE.Mesh(geometry, material);
-                scene.add(cylinder);
-                // cylinder.position.x = x1;
-                // cylinder.position.y = y1;
+                let [world_x2, world_y2] = image_to_world(x2, y2, to.width, to.height);
+                let world_z1 = from.z;
+                let world_z2 = to.z;
+
+                for (let p = 0; p < 1.0; p += 0.1) {
+                    let x3 = world_x1 * p + world_x2 * (1 - p);
+                    let y3 = world_y1 * p + world_y2 * (1 - p);
+                    let z3 = world_z1 * p + world_z2 * (1 - p);
+                    cube(x3, y3, z3);
+                }
+
+                // let x_comp = Math.pow((x2 - x1), 2);
+                // let y_comp = Math.pow((y2 - y1), 2);
+                // let z_comp = Math.pow((z2 - z1), 2);
+                // let distance = Math.sqrt(x_comp + y_comp + z_comp);
+                // var geometry = new THREE.CylinderGeometry(0.02, 0.02, 2, 32);
+                // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                // var cylinder = new THREE.Mesh(geometry, material);
+                // scene.add(cylinder);
+                // cylinder.position.x = world_x;
+                // cylinder.position.y = world_y;
                 // cylinder.position.z = z1;
-                console.log(x1, y1, z1);
+                // console.log(x1, y1, z1);
             }
             // ("Outpost Thinking.svg")
             // ("neighborhood-patterns.svg")
