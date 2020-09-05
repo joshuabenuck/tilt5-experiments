@@ -53,25 +53,6 @@
         const boxDepth = 1.5;
         const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-        function makeInstance(geometry, color, x) {
-            let loader = new THREE.TextureLoader();
-            var material = [
-                new THREE.MeshBasicMaterial({ map: loader.load("metadata-editor.svg") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("index.png") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("One Wiki Hosting Guide.svg") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("Outpost Thinking.svg") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("neighborhood-patterns.svg") }),
-                new THREE.MeshBasicMaterial({ map: loader.load("special-use-patterns.svg") }),
-            ];
-            const cube = new THREE.Mesh(geometry, material);
-            scene.add(cube);
-            // const material = new THREE.MeshPhongMaterial({ color });
-            // const cube = new THREE.Mesh(geometry, material);
-            // scene.add(cube);
-            cube.position.x = x;
-            return cube;
-        }
-
         window.textures = [];
 
         function image_to_world(x, y, width, height) {
@@ -121,14 +102,14 @@
             }
 
             add(name, x, y) {
-                var cube_geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-                var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-                var cube = new THREE.Mesh(cube_geometry, material);
-                scene.add(cube);
+                let sphereGeometry = new THREE.SphereGeometry(0.04, 32, 32);
+                var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                var sphere = new THREE.Mesh(sphereGeometry, material);
+                scene.add(sphere);
                 let [wx, wy] = image_to_world(x, y, this.width, this.height);
-                cube.position.x = wx;
-                cube.position.y = wy;
-                cube.position.z = this.z;
+                sphere.position.x = wx;
+                sphere.position.y = wy;
+                sphere.position.z = this.z;
                 this.dots[name] = [x, y, cube];
             }
 
@@ -152,6 +133,17 @@
             }
         }
 
+        function sphere(wx, wy, wz) {
+            let sphereGeometry = new THREE.SphereGeometry(0.04, 32, 32);
+            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            var sphere = new THREE.Mesh(sphereGeometry, material);
+            scene.add(sphere);
+            sphere.position.x = wx;
+            sphere.position.y = wy;
+            sphere.position.z = wz;
+            return sphere;
+        }
+
         function cube(wx, wy, wz) {
             var cube_geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
             var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -163,15 +155,24 @@
         }
 
         function cylinder(length, transform, x, y, z) {
-            var geometry = new THREE.CylinderGeometry(0.02, 0.02, length, 32);
+            var geometry = new THREE.CylinderGeometry(0.01, 0.01, length, 32);
             geometry.applyMatrix(transform);
-            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            var material = new THREE.MeshBasicMaterial({ color: 0x777777 });
             var cyl = new THREE.Mesh(geometry, material);
             cyl.position.x = x;
             cyl.position.y = y;
             cyl.position.z = z;
             // cylinder.lookAt(new THREE.Vector3(world_x2, world_y2, world_z2));
             scene.add(cyl);
+            return cyl;
+        }
+
+        class Packet {
+            constructor(sphere, p1, p2) {
+                this.sphere = sphere;
+                this.p1 = p1;
+                this.p2 = p2;
+            }
         }
 
         (async () => {
@@ -184,7 +185,8 @@
             await neighborhood.render();
             neighborhood.add("Neighborhood Patterns", 423, 132);
             // neighborhood.centerOn("Neighborhood Patterns");
-            connect(specialUse, neighborhood, "Neighborhood Patterns");
+            let packet = connect(specialUse, neighborhood, "Neighborhood Patterns");
+            requestAnimationFrame((time) => render(time, packet));
             // var geometry = new THREE.CylinderGeometry(0.1, 0.1, 2, 32);
             // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
             // var cylinder = new THREE.Mesh(geometry, material);
@@ -222,6 +224,10 @@
                     transform.multiply(t);
                 }
                 cylinder(distance, transform, world_x1, world_y1, world_z1);
+                return new Packet(
+                    sphere(world_x1, world_y1, world_z1),
+                    [world_x1, world_y1, world_z1],
+                    [world_x2, world_y2, world_z2]);
                 // cylinder.lookAt(new THREE.Vector3(world_x2, world_y2, world_z2));
             }
             // ("Outpost Thinking.svg")
@@ -229,10 +235,21 @@
             // ("special-use-patterns.svg")
         })();
 
-        function render(time) {
+        function render(time, packet) {
             time *= 0.001;  // convert time to seconds
 
-            requestAnimationFrame(render);
+            let p = time % 2;
+            if (p > 1) {
+                p = (2 - p) / 1;
+            }
+            let x3 = packet.p1[0] * p + packet.p2[0] * (1 - p);
+            let y3 = packet.p1[1] * p + packet.p2[1] * (1 - p);
+            let z3 = packet.p1[2] * p + packet.p2[2] * (1 - p);
+            packet.sphere.position.x = x3;
+            packet.sphere.position.y = y3;
+            packet.sphere.position.z = z3;
+            // console.log(p, x3, y3, z3, packet.p1, packet.p2);
+            requestAnimationFrame((time) => render(time, packet));
 
             // required if controls.enableDamping or controls.autoRotate are set to true
             controls.update();
@@ -246,7 +263,6 @@
             let ms = Date.now();
             // console.log(ms);
         }
-        requestAnimationFrame(render);
     </script>
 </body>
 
