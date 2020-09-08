@@ -15,12 +15,43 @@
     <canvas id="c" width="1375px" height="800px"></canvas>
     <img id="show" href="#"></img>
     <script type="module">
+        async function diagrams() {
+            // fetch all metadata for rendering a path through multiple diagrams
+            // usage: deno run --allow-net path.js
+
+            const uniq = (value, index, self) => self.indexOf(value) === index
+
+            let db = 'http://simnet.ward.asia.wiki.org/assets/pages/diagrams-as-base-model'
+            let index = await fetch(`${db}/index.json`).then(res => res.json())
+            let path = index.paths['npl demo']
+            let team = 'growing-regions'
+            let diagrams = path.map(t => t.diagram).filter(uniq)
+
+            const extension = (diagram) => index.data[team][diagram].extension
+
+            let images = {}
+            let pfi = diagrams.map(s => {
+                //return `${db}/data/${team}/${s}.${extension(s)}`
+                let url = `${db}/data/${team}/${s}.${extension(s)}`
+                images[s] = url
+                // return fetch(url).then(res => res.text()).then(text => images[s] = text)
+            })
+
+            let things = {}
+            let pft = diagrams.map(s => {
+                let url = `${db}/data/${team}/${s}.json`
+                return fetch(url).then(res => res.json()).then(json => things[s] = json.things)
+            })
+
+            await Promise.all([...pfi, ...pft])
+
+            return { path, images, things }
+        }
+
         import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
         import * as oc from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/examples/jsm/controls/OrbitControls.js';
 
         // http://found.ward.bay.wiki.org/threejs-fundamentals.html
-
-        console.log(THREE)
 
         const canvas = document.querySelector('#c');
         const renderer = new THREE.WebGLRenderer({ canvas });
@@ -110,7 +141,8 @@
                 sphere.position.x = wx;
                 sphere.position.y = wy;
                 sphere.position.z = this.z;
-                this.dots[name] = [x, y, cube];
+                this.dots[name] = [x, y, this.z, this.width, this.height, cube];
+                return this.dots[name]
             }
 
             centerOn(name) {
@@ -134,8 +166,8 @@
         }
 
         function sphere(wx, wy, wz) {
-            let sphereGeometry = new THREE.SphereGeometry(0.04, 32, 32);
-            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            let sphereGeometry = new THREE.SphereGeometry(0.06, 32, 32);
+            var material = new THREE.MeshBasicMaterial({ color: 0x009900 });
             var sphere = new THREE.Mesh(sphereGeometry, material);
             scene.add(sphere);
             sphere.position.x = wx;
@@ -155,9 +187,9 @@
         }
 
         function cylinder(length, transform, x, y, z) {
-            var geometry = new THREE.CylinderGeometry(0.01, 0.01, length, 32);
+            var geometry = new THREE.CylinderGeometry(0.02, 0.02, length, 32);
             geometry.applyMatrix(transform);
-            var material = new THREE.MeshBasicMaterial({ color: 0x777777 });
+            var material = new THREE.MeshBasicMaterial({ color: 0x3df3df });
             var cyl = new THREE.Mesh(geometry, material);
             cyl.position.x = x;
             cyl.position.y = y;
@@ -175,30 +207,42 @@
             }
         }
 
-        (async () => {
+        async function render_dot(path, images, things, index) {
+            let diagram_name = path[index].diagram
+            let thing_name = path[index].thing
+            let diagram = new Diagram(-index * 1.0, images[diagram_name])
+            await diagram.render()
+            let [x, y] = things[diagram_name][thing_name].dot
+            return diagram.add(thing_name, x, y);
+        }
 
-            let specialUse = new Diagram(0.0, "special-use-patterns.svg"); // 88, 30
-            await specialUse.render();
-            specialUse.add("Neighborhood Patterns", 88, 30);
-            // specialUse.centerOn("Neighborhood Patterns");
-            let neighborhood = new Diagram(-0.5, "neighborhood-patterns.svg"); // 423, 132
-            await neighborhood.render();
-            neighborhood.add("Neighborhood Patterns", 423, 132);
-            // neighborhood.centerOn("Neighborhood Patterns");
-            let packet = connect(specialUse, neighborhood, "Neighborhood Patterns");
-            requestAnimationFrame((time) => render(time, packet));
+        (async () => {
+            let { images, path, things } = await diagrams()
+            console.log({ images, path, things })
+            let dot1 = await render_dot(path, images, things, 0)
+            let dot2 = await render_dot(path, images, things, 1)
+            let dot3 = await render_dot(path, images, things, 2)
+            // let specialUse = new Diagram(0.0, "special-use-patterns.svg"); // 88, 30
+            // await specialUse.render();
+            // specialUse.add("Neighborhood Patterns", 88, 30);
+            // // specialUse.centerOn("Neighborhood Patterns");
+            // let neighborhood = new Diagram(-0.5, "neighborhood-patterns.svg"); // 423, 132
+            // await neighborhood.render();
+            // neighborhood.add("Neighborhood Patterns", 423, 132);
+            // // neighborhood.centerOn("Neighborhood Patterns");
+            let p1 = connect(dot1, dot2);
+            let p2 = connect(dot2, dot3);
+            requestAnimationFrame((time) => render(time, [p1, p2]));
             // var geometry = new THREE.CylinderGeometry(0.1, 0.1, 2, 32);
             // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
             // var cylinder = new THREE.Mesh(geometry, material);
             // scene.add(cylinder);
 
-            function connect(from, to, dot) {
-                let [x1, y1, _c1] = from.dots[dot];
-                let [world_x1, world_y1] = image_to_world(x1, y1, from.width, from.height);
-                let [x2, y2, _c2] = to.dots[dot];
-                let [world_x2, world_y2] = image_to_world(x2, y2, to.width, to.height);
-                let world_z1 = from.z;
-                let world_z2 = to.z;
+            function connect(from, to) {
+                let [x1, y1, world_z1, width1, height1, _c1] = from;
+                let [world_x1, world_y1] = image_to_world(x1, y1, width1, height1);
+                let [x2, y2, world_z2, width2, height2, _c2] = to;
+                let [world_x2, world_y2] = image_to_world(x2, y2, width2, height2);
 
                 // for (let p = 0; p < 1.0; p += 0.1) {
                 //     let x3 = world_x1 * p + world_x2 * (1 - p);
@@ -235,21 +279,23 @@
             // ("special-use-patterns.svg")
         })();
 
-        function render(time, packet) {
+        function render(time, packets) {
             time *= 0.001;  // convert time to seconds
 
             let p = time % 2;
             if (p > 1) {
                 p = (2 - p) / 1;
             }
-            let x3 = packet.p1[0] * p + packet.p2[0] * (1 - p);
-            let y3 = packet.p1[1] * p + packet.p2[1] * (1 - p);
-            let z3 = packet.p1[2] * p + packet.p2[2] * (1 - p);
-            packet.sphere.position.x = x3;
-            packet.sphere.position.y = y3;
-            packet.sphere.position.z = z3;
-            // console.log(p, x3, y3, z3, packet.p1, packet.p2);
-            requestAnimationFrame((time) => render(time, packet));
+            for (let packet of packets) {
+                let x3 = packet.p1[0] * p + packet.p2[0] * (1 - p);
+                let y3 = packet.p1[1] * p + packet.p2[1] * (1 - p);
+                let z3 = packet.p1[2] * p + packet.p2[2] * (1 - p);
+                packet.sphere.position.x = x3;
+                packet.sphere.position.y = y3;
+                packet.sphere.position.z = z3;
+                console.log(p, x3, y3, z3, packet.p1, packet.p2);
+            }
+            requestAnimationFrame((time) => render(time, packets));
 
             // required if controls.enableDamping or controls.autoRotate are set to true
             controls.update();
