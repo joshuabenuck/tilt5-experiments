@@ -92,17 +92,68 @@
             return [-w, -h]
         }
 
-        class World {
+        class Path {
             constructor() {
-                this.diagrams = [];
+                this.packets = [];
+                this.dots = [];
+                this.diagrams = {};
             }
 
-            add(diagram) {
-                this.diagrams.push(diagram);
+            async render() {
+                let { images, path, things } = await diagrams();
+                this.images = images;
+                this.path = path;
+                this.things = things;
+                console.log({ images, path, things })
+                let previous = undefined;
+                let index = 0;
+                for (let entry of path) {
+                    let dot = await this.render_entry(this.path, this.images, this.things, index);
+                    this.dots.push(dot);
+                    if (previous) {
+                        let p = this.connect(previous, dot);
+                        this.packets.push(p);
+                    }
+                    previous = dot;
+                    index += 1;
+                }
             }
 
-            centerOn(diagram, x, y) {
+            async render_entry(path, images, things, index) {
+                let diagram_name = path[index].diagram
+                let thing_name = path[index].thing
+                let diagram = this.diagrams[diagram_name];
+                if (!diagram) {
+                    diagram = new Diagram(-index * 1.0, images[diagram_name])
+                    this.diagrams[diagram_name] = diagram;
+                }
+                await diagram.render()
+                let [x, y] = things[diagram_name][thing_name].dot
+                return diagram.add(thing_name, x, y);
+            }
 
+            connect(from, to) {
+                let x_comp = Math.pow((to.world_x - from.world_x), 2);
+                let y_comp = Math.pow((to.world_y - from.world_y), 2);
+                let z_comp = Math.pow((to.world_z - from.world_z), 2);
+                let distance = Math.sqrt(x_comp + y_comp + z_comp);
+                let transforms = [
+                    new THREE.Matrix4().lookAt(
+                        new THREE.Vector3(from.world_x, from.world_y, from.world_z),
+                        new THREE.Vector3(to.world_x, to.world_y, to.world_z),
+                        new THREE.Vector3(0, 0, 1)),
+                    new THREE.Matrix4().makeRotationX(Math.PI / 2),
+                    new THREE.Matrix4().makeTranslation(0, -distance / 2, 0),
+                ];
+                let transform = new THREE.Matrix4();
+                for (let t of transforms) {
+                    transform.multiply(t);
+                }
+                cylinder(distance, transform, from.world_x, from.world_y, from.world_z);
+                return new Packet(
+                    sphere(from.world_x, from.world_y, from.world_z),
+                    [from.world_x, from.world_y, from.world_z],
+                    [to.world_x, to.world_y, to.world_z]);
             }
         }
 
@@ -141,7 +192,7 @@
                 sphere.position.x = wx;
                 sphere.position.y = wy;
                 sphere.position.z = this.z;
-                this.dots[name] = [x, y, this.z, this.width, this.height, cube];
+                this.dots[name] = new Dot(name, x, y, this.z, this.width, this.height, cube);
                 return this.dots[name]
             }
 
@@ -154,14 +205,42 @@
         }
 
         class Dot {
-            contstructor(name, x, y) {
+            constructor(name, image_x, image_y, world_z, image_width, image_height, shape) {
                 this.name = name;
-                this.x = x;
-                this.y = y;
-                this.image_x = x;
-                this.image_x = y;
-                this.world_x = x;
-                this.world_y = y;
+                this.image_width = image_width;
+                this.image_height = image_height;
+                this.image_x = image_x;
+                this.image_y = image_y;
+                this.world_z = world_z;
+                this.shape = shape;
+            }
+
+            set image_x(x) {
+                this._image_x = x;
+                this.world_x = this.image_x_to_world_x(x, this.image_width);
+            }
+
+            get image_x() {
+                this._image_x
+            }
+
+            set image_y(y) {
+                this._image_y = y;
+                this.world_y = this.image_y_to_world_y(y, this.image_height);
+            }
+
+            get image_y() {
+                this._image_y
+            }
+
+            image_x_to_world_x(image_x, image_width) {
+                let world_x = image_width / 200 / 2 - (image_x / 200);
+                return -world_x
+            }
+
+            image_y_to_world_y(image_y, image_height) {
+                let world_y = -image_height / 200 / 2 + (image_y / 200);
+                return -world_y
             }
         }
 
@@ -207,76 +286,27 @@
             }
         }
 
-        async function render_dot(path, images, things, index) {
-            let diagram_name = path[index].diagram
-            let thing_name = path[index].thing
-            let diagram = new Diagram(-index * 1.0, images[diagram_name])
-            await diagram.render()
-            let [x, y] = things[diagram_name][thing_name].dot
-            return diagram.add(thing_name, x, y);
-        }
+        // async function render_dot(path, images, things, index) {
+        //     let diagram_name = path[index].diagram
+        //     let thing_name = path[index].thing
+        //     let diagram = new Diagram(-index * 1.0, images[diagram_name])
+        //     await diagram.render()
+        //     let [x, y] = things[diagram_name][thing_name].dot
+        //     return diagram.add(thing_name, x, y);
+        // }
 
         (async () => {
-            let { images, path, things } = await diagrams()
-            console.log({ images, path, things })
-            let dot1 = await render_dot(path, images, things, 0)
-            let dot2 = await render_dot(path, images, things, 1)
-            let dot3 = await render_dot(path, images, things, 2)
-            // let specialUse = new Diagram(0.0, "special-use-patterns.svg"); // 88, 30
-            // await specialUse.render();
-            // specialUse.add("Neighborhood Patterns", 88, 30);
-            // // specialUse.centerOn("Neighborhood Patterns");
-            // let neighborhood = new Diagram(-0.5, "neighborhood-patterns.svg"); // 423, 132
-            // await neighborhood.render();
-            // neighborhood.add("Neighborhood Patterns", 423, 132);
-            // // neighborhood.centerOn("Neighborhood Patterns");
-            let p1 = connect(dot1, dot2);
-            let p2 = connect(dot2, dot3);
-            requestAnimationFrame((time) => render(time, [p1, p2]));
-            // var geometry = new THREE.CylinderGeometry(0.1, 0.1, 2, 32);
-            // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            // var cylinder = new THREE.Mesh(geometry, material);
-            // scene.add(cylinder);
+            // let { images, path, things } = await diagrams()
+            // console.log({ images, path, things })
+            // let dot1 = await render_dot(path, images, things, 0)
+            // let dot2 = await render_dot(path, images, things, 1)
+            // let dot3 = await render_dot(path, images, things, 2)
+            // let p1 = connect(dot1, dot2);
+            // let p2 = connect(dot2, dot3);
+            let path = new Path();
+            await path.render();
+            requestAnimationFrame((time) => render(time, path.packets));
 
-            function connect(from, to) {
-                let [x1, y1, world_z1, width1, height1, _c1] = from;
-                let [world_x1, world_y1] = image_to_world(x1, y1, width1, height1);
-                let [x2, y2, world_z2, width2, height2, _c2] = to;
-                let [world_x2, world_y2] = image_to_world(x2, y2, width2, height2);
-
-                // for (let p = 0; p < 1.0; p += 0.1) {
-                //     let x3 = world_x1 * p + world_x2 * (1 - p);
-                //     let y3 = world_y1 * p + world_y2 * (1 - p);
-                //     let z3 = world_z1 * p + world_z2 * (1 - p);
-                //     cube(x3, y3, z3);
-                // }
-
-                let x_comp = Math.pow((world_x2 - world_x1), 2);
-                let y_comp = Math.pow((world_y2 - world_y1), 2);
-                let z_comp = Math.pow((world_z2 - world_z1), 2);
-                let distance = Math.sqrt(x_comp + y_comp + z_comp);
-                let transforms = [
-                    new THREE.Matrix4().lookAt(
-                        new THREE.Vector3(world_x1, world_y1, world_z1),
-                        new THREE.Vector3(world_x2, world_y2, world_z2),
-                        new THREE.Vector3(0, 0, 1)),
-                    new THREE.Matrix4().makeRotationX(Math.PI / 2),
-                    new THREE.Matrix4().makeTranslation(0, -distance / 2, 0),
-                ];
-                let transform = new THREE.Matrix4();
-                for (let t of transforms) {
-                    transform.multiply(t);
-                }
-                cylinder(distance, transform, world_x1, world_y1, world_z1);
-                return new Packet(
-                    sphere(world_x1, world_y1, world_z1),
-                    [world_x1, world_y1, world_z1],
-                    [world_x2, world_y2, world_z2]);
-                // cylinder.lookAt(new THREE.Vector3(world_x2, world_y2, world_z2));
-            }
-            // ("Outpost Thinking.svg")
-            // ("neighborhood-patterns.svg")
-            // ("special-use-patterns.svg")
         })();
 
         function render(time, packets) {
