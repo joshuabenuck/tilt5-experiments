@@ -246,7 +246,7 @@
 
         function sphere(wx, wy, wz) {
             let sphereGeometry = new THREE.SphereGeometry(0.06, 32, 32);
-            var material = new THREE.MeshBasicMaterial({ color: 0x009900 });
+            var material = new THREE.MeshBasicMaterial({ color: 0x448800 });
             var sphere = new THREE.Mesh(sphereGeometry, material);
             scene.add(sphere);
             sphere.position.x = wx;
@@ -312,10 +312,7 @@
         function render(time, packets) {
             time *= 0.001;  // convert time to seconds
 
-            let p = time % 2;
-            if (p > 1) {
-                p = (2 - p) / 1;
-            }
+            let p = 1 - time % 1
             for (let packet of packets) {
                 let x3 = packet.p1[0] * p + packet.p2[0] * (1 - p);
                 let y3 = packet.p1[1] * p + packet.p2[1] * (1 - p);
