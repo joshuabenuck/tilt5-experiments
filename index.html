@@ -124,7 +124,7 @@
                 let thing_name = path[index].thing
                 let diagram = this.diagrams[diagram_name];
                 if (!diagram) {
-                    diagram = new Diagram(-index * .5, images[diagram_name])
+                    diagram = new Diagram(-index * .5 + 2.5, images[diagram_name])
                     this.diagrams[diagram_name] = diagram;
                 }
                 await diagram.render()
