@@ -124,7 +124,7 @@
                 let thing_name = path[index].thing
                 let diagram = this.diagrams[diagram_name];
                 if (!diagram) {
-                    diagram = new Diagram(-index * 1.0, images[diagram_name])
+                    diagram = new Diagram(-index * .5 + 2.5, images[diagram_name])
                     this.diagrams[diagram_name] = diagram;
                 }
                 await diagram.render()
@@ -180,7 +180,7 @@
                 this.plane = new THREE.Mesh(plane_geometry, plane_material);
                 window.textures.push(texture);
                 scene.add(this.plane);
-                this.plane.position.z = this.z;
+                this.plane.position.z = this.z - 0.1;
             }
 
             add(name, x, y) {
