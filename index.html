@@ -111,12 +111,17 @@
                     let dot = await this.render_entry(this.path, this.images, this.things, index);
                     this.dots.push(dot);
                     if (previous) {
-                        let p = this.connect(previous, dot);
-                        this.packets.push(p);
+                        this.connect(previous, dot, this.packets.length == 0);
                     }
                     previous = dot;
                     index += 1;
                 }
+                let first = this.dots[0];
+                let packet = new Packet(
+                    sphere(first.world_x, first.world_y, first.world_z),
+                    this.dots);
+                this.packets.push(packet);
+                return packet;
             }
 
             async render_entry(path, images, things, index) {
@@ -132,7 +137,7 @@
                 return diagram.add(thing_name, x, y);
             }
 
-            connect(from, to) {
+            connect(from, to, create_packet) {
                 let x_comp = Math.pow((to.world_x - from.world_x), 2);
                 let y_comp = Math.pow((to.world_y - from.world_y), 2);
                 let z_comp = Math.pow((to.world_z - from.world_z), 2);
@@ -150,10 +155,8 @@
                     transform.multiply(t);
                 }
                 cylinder(distance, transform, from.world_x, from.world_y, from.world_z);
-                return new Packet(
-                    sphere(from.world_x, from.world_y, from.world_z),
-                    [from.world_x, from.world_y, from.world_z],
-                    [to.world_x, to.world_y, to.world_z]);
+                if (create_packet) {
+                }
             }
         }
 
@@ -279,10 +282,25 @@
         }
 
         class Packet {
-            constructor(sphere, p1, p2) {
+            constructor(sphere, dots) {
                 this.sphere = sphere;
-                this.p1 = p1;
-                this.p2 = p2;
+                this.dots = dots;
+                this.index = 0;
+            }
+
+            get p1() {
+                return this.dots[this.index];
+            }
+
+            get p2() {
+                return this.dots[this.index + 1];
+            }
+
+            next() {
+                this.index += 1;
+                if (this.index == this.dots.length - 1) {
+                    this.index = 0;
+                }
             }
         }
 
@@ -310,18 +328,21 @@
         })();
 
         function render(time, packets) {
+            console.log(time)
             time *= 0.001;  // convert time to seconds
 
             let p = 1 - time % 1
-            for (let packet of packets) {
-                let x3 = packet.p1[0] * p + packet.p2[0] * (1 - p);
-                let y3 = packet.p1[1] * p + packet.p2[1] * (1 - p);
-                let z3 = packet.p1[2] * p + packet.p2[2] * (1 - p);
-                packet.sphere.position.x = x3;
-                packet.sphere.position.y = y3;
-                packet.sphere.position.z = z3;
-                console.log(p, x3, y3, z3, packet.p1, packet.p2);
+            let packet = packets[0];
+            if (Math.trunc(time) % 100) {
+                packet.next()
             }
+            let x3 = packet.p1.world_x * p + packet.p2.world_x * (1 - p);
+            let y3 = packet.p1.world_y * p + packet.p2.world_y * (1 - p);
+            let z3 = packet.p1.world_z * p + packet.p2.world_z * (1 - p);
+            packet.sphere.position.x = x3;
+            packet.sphere.position.y = y3;
+            packet.sphere.position.z = z3;
+            console.log(p, x3, y3, z3, packet.p1, packet.p2);
             requestAnimationFrame((time) => render(time, packets));
 
             // required if controls.enableDamping or controls.autoRotate are set to true
