@@ -282,10 +282,36 @@
         }
 
         class Packet {
-            constructor(sphere, dots) {
+            constructor(sphere, dots, speed) {
                 this.sphere = sphere;
                 this.dots = dots;
                 this.index = 0;
+                this.start = new Date().getTime();
+                // time to go from one dot to the next
+                this.speed = 1;
+                if (speed) {
+                    this.speed = speed;
+                }
+            }
+
+            tick() {
+                this.now = new Date().getTime();
+                this.time = this.now - this.start;
+                this.time *= 0.001;  // convert time to seconds
+                // time to make a full trip
+                let trip = this.speed * this.dots.length - 1;
+                // percentage of time to the next dot
+                let p = this.speed - this.time % this.speed;
+                // percentage of time to the end of the trip
+                let tp = this.time % trip;
+                this.index = Math.trunc(tp);
+
+                this.x3 = this.p1.world_x * p + this.p2.world_x * (1 - p);
+                this.y3 = this.p1.world_y * p + this.p2.world_y * (1 - p);
+                this.z3 = this.p1.world_z * p + this.p2.world_z * (1 - p);
+                this.sphere.position.x = this.x3;
+                this.sphere.position.y = this.y3;
+                this.sphere.position.z = this.z3;
             }
 
             get p1() {
@@ -328,28 +354,8 @@
         })();
 
         function render(time, packets) {
-            console.log(time)
-            time *= 0.001;  // convert time to seconds
-
             let packet = packets[0];
-            window.packet = packet;
-            // time to go from one dot to the next
-            let period = 1;
-            // time to make a full trip
-            let trip = period * packet.dots.length - 1;
-            // percentage of time to the next dot
-            let p = period - time % period
-            // percentage of time to the end of the trip
-            let tp = time % trip;
-            packet.index = Math.trunc(tp);
-
-            let x3 = packet.p1.world_x * p + packet.p2.world_x * (1 - p);
-            let y3 = packet.p1.world_y * p + packet.p2.world_y * (1 - p);
-            let z3 = packet.p1.world_z * p + packet.p2.world_z * (1 - p);
-            packet.sphere.position.x = x3;
-            packet.sphere.position.y = y3;
-            packet.sphere.position.z = z3;
-            console.log(p, x3, y3, z3, packet.p1, packet.p2);
+            packet.tick();
             requestAnimationFrame((time) => render(time, packets));
 
             // required if controls.enableDamping or controls.autoRotate are set to true
