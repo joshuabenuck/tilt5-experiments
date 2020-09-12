@@ -331,11 +331,18 @@
             console.log(time)
             time *= 0.001;  // convert time to seconds
 
-            let p = 1 - time % 1
             let packet = packets[0];
-            if (Math.trunc(time) % 100) {
-                packet.next()
-            }
+            window.packet = packet;
+            // time to go from one dot to the next
+            let period = 1;
+            // time to make a full trip
+            let trip = period * packet.dots.length - 1;
+            // percentage of time to the next dot
+            let p = period - time % period
+            // percentage of time to the end of the trip
+            let tp = time % trip;
+            packet.index = Math.trunc(tp);
+
             let x3 = packet.p1.world_x * p + packet.p2.world_x * (1 - p);
             let y3 = packet.p1.world_y * p + packet.p2.world_y * (1 - p);
             let z3 = packet.p1.world_z * p + packet.p2.world_z * (1 - p);
