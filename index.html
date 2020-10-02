@@ -15,39 +15,6 @@
     <canvas id="c" width="1375px" height="800px"></canvas>
     <img id="show" href="#"></img>
     <script type="module">
-        async function diagrams(demo) {
-            // fetch all metadata for rendering a path through multiple diagrams
-            // usage: deno run --allow-net path.js
-
-            const uniq = (value, index, self) => self.indexOf(value) === index
-
-            let db = 'http://simnet.ward.asia.wiki.org/assets/pages/diagrams-as-base-model'
-            let index = await fetch(`${db}/index.json`).then(res => res.json())
-            let path = index.paths[demo]
-            let team = 'growing-regions'
-            let diagrams = path.map(t => t.diagram).filter(uniq)
-
-            const extension = (diagram) => index.data[team][diagram].extension
-
-            let images = {}
-            let pfi = diagrams.map(s => {
-                //return `${db}/data/${team}/${s}.${extension(s)}`
-                let url = `${db}/data/${team}/${s}.${extension(s)}`
-                images[s] = url
-                // return fetch(url).then(res => res.text()).then(text => images[s] = text)
-            })
-
-            let things = {}
-            let pft = diagrams.map(s => {
-                let url = `${db}/data/${team}/${s}.json`
-                return fetch(url).then(res => res.json()).then(json => things[s] = json.things)
-            })
-
-            await Promise.all([...pfi, ...pft])
-
-            return { path, images, things }
-        }
-
         import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
         import * as oc from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/examples/jsm/controls/OrbitControls.js';
 
@@ -55,7 +22,6 @@
 
         const canvas = document.querySelector('#c');
         const renderer = new THREE.WebGLRenderer({ canvas });
-        window.renderer = renderer;
 
         // const fov = 50;
         // const aspect = 2.5;  // the canvas default
@@ -64,13 +30,12 @@
         // const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 2.0, 1000);
         // camera.position.z = 200;
-        var controls = new oc.OrbitControls(camera, renderer.domElement);
+        var controls = new oc.MapControls(camera, renderer.domElement);
         //controls.update() must be called after any manual changes to the camera's transform
         camera.position.set(0, 0, 7.5);
         controls.update();
 
         const scene = new THREE.Scene();
-
         {
             const color = 0xFFFFFF;
             const intensity = 1;
@@ -84,12 +49,8 @@
         const boxDepth = 1.5;
         const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-        window.textures = [];
-
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
-        window.mouse = mouse;
-        let INTERSECTED;
 
         document.addEventListener('mousemove', (event) => {
             event.preventDefault();
@@ -98,287 +59,24 @@
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
         }, false);
 
-        function image_to_world(x, y, width, height) {
-            let w = width / 200 / 2 - (x / 200);
-            let h = -height / 200 / 2 + (y / 200);
-            return [-w, -h]
-        }
+        window.THREE = THREE;
+        window.renderer = renderer;
+        window.camera = camera;
+        window.controls = controls;
+        window.scene = scene;
+        window.textures = [];
+        window.raycaster = raycaster;
+        window.mouse = mouse;
+        window.INTERSECTED = undefined;
+    </script>
+    <script type="text/javascript" src="js/shapes.js"></script>
+    <script type="text/javascript" src="js/world.js"></script>
+    <script type="text/javascript" src="js/path.js"></script>
+    <script type="text/javascript" src="js/packet.js"></script>
+    <script type="text/javascript" src="js/dot.js"></script>
+    <script type="text/javascript" src="js/diagram.js"></script>
+    <script type="text/javascript">
 
-        class World {
-            constructor() {
-                this.paths = {};
-                this.diagrams = {};
-            }
-
-            add(demo) {
-                let colors = [
-                    0x3df3df,
-                    0x73d73d,
-                ]
-                let index = Object.keys(this.paths).length % colors.length;
-                console.log({ index, colors, color: colors[index] })
-                let path = new Path(this, demo, colors[index]);
-                this.paths[demo] = path;
-                return path;
-            }
-
-            packets() {
-                let packets = [];
-                for (let path of this.paths.values()) {
-                    for (let packet of path.packets) {
-                        packets.push(packet);
-                    }
-                }
-            }
-        }
-
-        class Path {
-            constructor(world, demo, color) {
-                this.packets = [];
-                this.dots = [];
-                this.demo = demo;
-                this.world = world;
-                this.color = color
-            }
-
-            async render() {
-                let { images, path, things } = await diagrams(this.demo);
-                this.images = images;
-                this.path = path;
-                this.things = things;
-                console.log({ images, path, things })
-                let previous = undefined;
-                let index = 0;
-                for (let entry of path) {
-                    let dot = await this.render_entry(this.path, this.images, this.things, index);
-                    this.dots.push(dot);
-                    if (previous) {
-                        this.connect(previous, dot, this.packets.length == 0);
-                    }
-                    previous = dot;
-                    index += 1;
-                }
-                return this.create_packet();
-            }
-
-            create_packet(speed) {
-                if (!speed) {
-                    speed = 1.0;
-                }
-                let first = this.dots[0];
-                let packet = new Packet(
-                    sphere(first.world_x, first.world_y, first.world_z),
-                    this.dots, speed);
-                this.packets.push(packet);
-                return packet;
-            }
-
-            async render_entry(path, images, things, index) {
-                let diagram_name = path[index].diagram
-                let thing_name = path[index].thing
-                let diagram = this.world.diagrams[diagram_name];
-                if (!diagram) {
-                    let count = Object.keys(this.world.diagrams).length;
-                    diagram = new Diagram(-count * 1.0 + 2.5, images[diagram_name])
-                    this.world.diagrams[diagram_name] = diagram;
-                    await diagram.render()
-                }
-                let [x, y] = things[diagram_name][thing_name].dot
-                return diagram.add(thing_name, x, y);
-            }
-
-            connect(from, to, create_packet) {
-                let x_comp = Math.pow((to.world_x - from.world_x), 2);
-                let y_comp = Math.pow((to.world_y - from.world_y), 2);
-                let z_comp = Math.pow((to.world_z - from.world_z), 2);
-                let distance = Math.sqrt(x_comp + y_comp + z_comp);
-                let transforms = [
-                    new THREE.Matrix4().lookAt(
-                        new THREE.Vector3(from.world_x, from.world_y, from.world_z),
-                        new THREE.Vector3(to.world_x, to.world_y, to.world_z),
-                        new THREE.Vector3(0, 0, 1)),
-                    new THREE.Matrix4().makeRotationX(Math.PI / 2),
-                    new THREE.Matrix4().makeTranslation(0, -distance / 2, 0),
-                ];
-                let transform = new THREE.Matrix4();
-                for (let t of transforms) {
-                    transform.multiply(t);
-                }
-                cylinder(distance, transform, from.world_x, from.world_y, from.world_z, this.color);
-                if (create_packet) {
-                }
-            }
-        }
-
-        class Diagram {
-            constructor(z, path) {
-                this.z = z;
-                this.path = path;
-                this.dots = {};
-            }
-
-            async render() {
-                let loader = new THREE.TextureLoader();
-                let promise = new Promise(
-                    (resolve, reject) => {
-                        loader.load(this.path, (texture) => {
-                            resolve(texture);
-                        });
-                    });
-                let texture = await promise;
-                this.width = texture.image.width;
-                this.height = texture.image.height;
-                let plane_material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
-                var plane_geometry = new THREE.PlaneGeometry(this.width / 200, this.height / 200);
-                this.plane = new THREE.Mesh(plane_geometry, plane_material);
-                window.textures.push(texture);
-                scene.add(this.plane);
-                this.plane.position.z = this.z - 0.1;
-            }
-
-            add(name, x, y) {
-                let sphereGeometry = new THREE.SphereGeometry(0.04, 32, 32);
-                var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-                var sphere = new THREE.Mesh(sphereGeometry, material);
-                scene.add(sphere);
-                let [wx, wy] = image_to_world(x, y, this.width, this.height);
-                sphere.position.x = wx;
-                sphere.position.y = wy;
-                sphere.position.z = this.z;
-                this.dots[name] = new Dot(name, x, y, this.z, this.width, this.height, cube);
-                return this.dots[name]
-            }
-
-            centerOn(name) {
-                let [x, y, _c] = this.dots[name];
-                let [plane_x, plane_y] = image_to_world(x, y, this.width, this.height);
-                this.plane.position.x = -plane_x;
-                this.plane.position.y = -plane_y;
-            }
-        }
-
-        class Dot {
-            constructor(name, image_x, image_y, world_z, image_width, image_height, shape) {
-                this.name = name;
-                this.image_width = image_width;
-                this.image_height = image_height;
-                this.image_x = image_x;
-                this.image_y = image_y;
-                this.world_z = world_z;
-                this.shape = shape;
-            }
-
-            set image_x(x) {
-                this._image_x = x;
-                this.world_x = this.image_x_to_world_x(x, this.image_width);
-            }
-
-            get image_x() {
-                this._image_x
-            }
-
-            set image_y(y) {
-                this._image_y = y;
-                this.world_y = this.image_y_to_world_y(y, this.image_height);
-            }
-
-            get image_y() {
-                this._image_y
-            }
-
-            image_x_to_world_x(image_x, image_width) {
-                let world_x = image_width / 200 / 2 - (image_x / 200);
-                return -world_x
-            }
-
-            image_y_to_world_y(image_y, image_height) {
-                let world_y = -image_height / 200 / 2 + (image_y / 200);
-                return -world_y
-            }
-        }
-
-        function sphere(wx, wy, wz) {
-            let sphereGeometry = new THREE.SphereGeometry(0.06, 32, 32);
-            var material = new THREE.MeshBasicMaterial({ color: 0x448800 });
-            var sphere = new THREE.Mesh(sphereGeometry, material);
-            scene.add(sphere);
-            sphere.position.x = wx;
-            sphere.position.y = wy;
-            sphere.position.z = wz;
-            return sphere;
-        }
-
-        function cube(wx, wy, wz) {
-            var cube_geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            var cube = new THREE.Mesh(cube_geometry, material);
-            scene.add(cube);
-            cube.position.x = wx;
-            cube.position.y = wy;
-            cube.position.z = wz;
-        }
-
-        function cylinder(length, transform, x, y, z, color) {
-            var geometry = new THREE.CylinderGeometry(0.02, 0.02, length, 32);
-            geometry.applyMatrix(transform);
-            var material = new THREE.MeshBasicMaterial({ color });
-            var cyl = new THREE.Mesh(geometry, material);
-            cyl.position.x = x;
-            cyl.position.y = y;
-            cyl.position.z = z;
-            // cylinder.lookAt(new THREE.Vector3(world_x2, world_y2, world_z2));
-            scene.add(cyl);
-            return cyl;
-        }
-
-        class Packet {
-            constructor(sphere, dots, speed) {
-                this.sphere = sphere;
-                this.dots = dots;
-                this.index = 0;
-                this.start = new Date().getTime();
-                // time to go from one dot to the next
-                this.speed = 1;
-                if (speed) {
-                    this.speed = speed;
-                }
-            }
-
-            tick() {
-                this.now = new Date().getTime();
-                this.time = this.now - this.start;
-                this.time *= 0.001;  // convert time to seconds
-                // time to make a full trip
-                let trip = this.speed * this.dots.length - 1;
-                // percentage of time to the next dot
-                let p = this.speed - this.time % this.speed;
-                // percentage of time to the end of the trip
-                let tp = this.time % trip;
-                this.index = Math.trunc(tp);
-
-                this.x3 = this.p1.world_x * p + this.p2.world_x * (1 - p);
-                this.y3 = this.p1.world_y * p + this.p2.world_y * (1 - p);
-                this.z3 = this.p1.world_z * p + this.p2.world_z * (1 - p);
-                this.sphere.position.x = this.x3;
-                this.sphere.position.y = this.y3;
-                this.sphere.position.z = this.z3;
-            }
-
-            get p1() {
-                return this.dots[this.index];
-            }
-
-            get p2() {
-                return this.dots[this.index + 1];
-            }
-
-            next() {
-                this.index += 1;
-                if (this.index == this.dots.length - 1) {
-                    this.index = 0;
-                }
-            }
-        }
 
         // async function render_dot(path, images, things, index) {
         //     let diagram_name = path[index].diagram
@@ -414,12 +112,10 @@
         function render(time, packets) {
             raycaster.setFromCamera(mouse, camera);
             let intersects = raycaster.intersectObjects(scene.children);
-            console.log(intersects.length);
             if (intersects.length > 0) {
                 if (INTERSECTED != intersects[0].object) {
                     if (INTERSECTED) INTERSECTED.material.opacity = 0.5;
                     INTERSECTED = intersects[0].object;
-                    console.log(INTERSECTED);
                     INTERSECTED.material.opacity = 1.0;
                 }
             } else {
