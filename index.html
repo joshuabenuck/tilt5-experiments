@@ -417,10 +417,10 @@
             console.log(intersects.length);
             if (intersects.length > 0) {
                 if (INTERSECTED != intersects[0].object) {
+                    if (INTERSECTED) INTERSECTED.material.opacity = 0.5;
                     INTERSECTED = intersects[0].object;
                     console.log(INTERSECTED);
                     INTERSECTED.material.opacity = 1.0;
-
                 }
             } else {
                 if (INTERSECTED) INTERSECTED.material.opacity = 0.5;
