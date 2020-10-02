@@ -30,7 +30,7 @@
         // const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 2.0, 1000);
         // camera.position.z = 200;
-        var controls = new oc.MapControls(camera, renderer.domElement);
+        var controls = new oc.OrbitControls(camera, renderer.domElement);
         //controls.update() must be called after any manual changes to the camera's transform
         camera.position.set(0, 0, 7.5);
         controls.update();
@@ -76,8 +76,6 @@
     <script type="text/javascript" src="js/dot.js"></script>
     <script type="text/javascript" src="js/diagram.js"></script>
     <script type="text/javascript">
-
-
         // async function render_dot(path, images, things, index) {
         //     let diagram_name = path[index].diagram
         //     let thing_name = path[index].thing
@@ -96,10 +94,8 @@
             // let p1 = connect(dot1, dot2);
             // let p2 = connect(dot2, dot3);
             let world = new World();
-            let path = world.add("npl demo");
-            let path2 = world.add("npl demo2");
-            await path.render();
-            await path2.render();
+            let path = await world.add_demo("npl demo");
+            let path2 = await world.add_demo("npl demo2");
             // for (let i = 0; i < 10; i++) {
             //     path.create_packet(Math.random());
             //     path2.create_packet(Math.random());

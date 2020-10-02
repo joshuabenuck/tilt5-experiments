@@ -1,6 +1,6 @@
 class Diagram {
-  constructor(z, path) {
-    this.z = z;
+  constructor(offsets, path) {
+    this.offsets = offsets;
     this.path = path;
     this.dots = {};
   }
@@ -27,10 +27,16 @@ class Diagram {
     this.plane = new THREE.Mesh(plane_geometry, plane_material);
     window.textures.push(texture);
     scene.add(this.plane);
-    this.plane.position.z = this.z - 0.1;
+    if (this.offsets.x != undefined) {
+      let offset = this.offsets.x;
+      this.plane.position.x = offset + this.width / 200 / 2;
+    }
+    if (this.offsets.z) {
+      this.plane.position.z = this.offsets.z - 0.1;
+    }
   }
 
-  add(name, x, y) {
+  add_dot(name, x, y) {
     let sphereGeometry = new THREE.SphereGeometry(0.04, 32, 32);
     var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     var sphere = new THREE.Mesh(sphereGeometry, material);
