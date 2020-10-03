@@ -117,15 +117,21 @@ class World {
   render(time, packets) {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     let intersects = this.raycaster.intersectObjects(scene.children);
+    intersects = intersects.filter((i) => {
+      return i.object.geometry.type == "PlaneGeometry";
+    });
     if (intersects.length > 0) {
-      if (this.INTERSECTED != intersects[0].object) {
-        if (this.INTERSECTED) this.INTERSECTED.material.opacity = 0.5;
-        this.INTERSECTED = intersects[0].object;
-        this.INTERSECTED.material.opacity = 1.0;
+      if (this.intersected != intersects[0].object) {
+        if (this.intersected) this.intersected.userData.diagram.deselect();
+        console.log(intersects[0].object);
+        this.intersected = intersects[0].object;
+        let diagram = this.intersected.userData.diagram;
+        diagram.select();
+        // this.camera.position.x = diagram.offsets.x + diagram.width / 200 / 2;
       }
     } else {
-      if (this.INTERSECTED) this.INTERSECTED.material.opacity = 0.5;
-      this.INTERSECTED = null;
+      if (this.intersected) this.intersected.userData.diagram.deselect();
+      this.intersected = null;
     }
     for (let packet of packets) {
       packet.tick();

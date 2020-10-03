@@ -26,16 +26,27 @@ class Diagram {
       this.height / 200,
     );
     this.plane = new THREE.Mesh(plane_geometry, plane_material);
+    this.plane.userData.diagram = this;
     scene.add(this.plane);
+    var edges = new THREE.EdgesGeometry(plane_geometry);
+    this.outline = new THREE.LineSegments(
+      edges,
+      new THREE.LineBasicMaterial(
+        { color: 0x77ff77, transparent: true, opacity: 0.0 },
+      ),
+    );
+    scene.add(this.outline);
     this.offsets.x = 0.0;
     if (this.world_offsets.x != undefined) {
       this.offsets.x = this.world_offsets.x + this.width / 200 / 2;
       this.plane.position.x = this.offsets.x;
+      this.outline.position.x = this.offsets.x;
     }
     this.offsets.z = 0.0;
     if (this.world_offsets.z) {
       this.offsets.z = this.world_offsets.z - 0.1;
       this.plane.position.z = this.offsets.z;
+      this.outline.position.z = this.offsets.z;
     }
   }
 
@@ -49,6 +60,16 @@ class Diagram {
       this.height,
     );
     return this.dots[name];
+  }
+
+  select() {
+    this.plane.material.opacity = 1.0;
+    this.outline.material.opacity = 1.0;
+  }
+
+  deselect() {
+    this.plane.material.opacity = 0.5;
+    this.outline.material.opacity = 0.0;
   }
 
   centerOn(name) {

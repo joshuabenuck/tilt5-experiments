@@ -41,6 +41,7 @@
 
         (async () => {
             let world = new World();
+            window.world = world;
             await world.add_demo("npl demo");
             await world.add_demo("npl demo2");
             requestAnimationFrame((time) => world.render(time, world.packets()));
