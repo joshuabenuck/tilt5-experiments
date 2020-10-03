@@ -36,10 +36,11 @@ async function diagrams(demo) {
 
 const LINEAR = "linear";
 const STACKED = "stacked";
+const CIRCLE = "circle";
 
 class World {
   constructor(layout) {
-    this.layout = STACKED;
+    this.layout = CIRCLE;
     if (layout) {
       this.layout = layout;
     }
@@ -49,9 +50,18 @@ class World {
     this.camera = new THREE.PerspectiveCamera(
       50,
       window.innerWidth / window.innerHeight,
-      2.0,
+      1.0,
       1000,
     );
+    // this.camera = new THREE.OrthographicCamera(
+    //   window.innerWidth / -2,
+    //   window.innerWidth / 2,
+    //   window.innerHeight / 2,
+    //   window.innerHeight / -2,
+    //   1.0,
+    //   1000,
+    // );
+    this.camera.position.set(0, 0, 7.5);
     if (this.layout == LINEAR) {
       this.controls = new oc.MapControls(this.camera, this.renderer.domElement);
     } else if (this.layout == STACKED) {
@@ -59,11 +69,16 @@ class World {
         this.camera,
         this.renderer.domElement,
       );
+    } else if (this.layout == CIRCLE) {
+      this.controls = new oc.OrbitControls(
+        this.camera,
+        this.renderer.domElement,
+      );
+      this.camera.position.set(0, 0, 0);
     } else {
       console.log("WARN: Unknown layout", this.layout);
     }
     //controls.update() must be called after any manual changes to the camera's transform
-    this.camera.position.set(0, 0, 7.5);
     this.controls.update();
 
     this.raycaster = new THREE.Raycaster();
@@ -71,13 +86,28 @@ class World {
 
     document.addEventListener("click", (event) => {
       if (this.intersected) {
-        for (let diagram of Object.values(this.diagrams)) {
-          diagram.deselect();
-        }
-        let diagram = this.intersected.userData.diagram;
-        diagram.select();
-        if (this.layout == LINEAR) {
-          scene.position.x = -diagram.offsets.x;
+        if (this.layout == CIRCLE) {
+          let previous_index = 0;
+          let selected = this.selected;
+          if (selected) {
+            previous_index = selected.index;
+            selected.deselect();
+          }
+          let diagram = this.intersected.userData.diagram;
+          diagram.select();
+          let rotate_by = this.selected.index - previous_index;
+          scene.applyMatrix4(
+            new THREE.Matrix4().makeRotationY(rotate_by * Math.PI / 12),
+          );
+        } else {
+          for (let diagram of Object.values(this.diagrams)) {
+            diagram.deselect();
+          }
+          let diagram = this.intersected.userData.diagram;
+          diagram.select();
+          if (this.layout == LINEAR) {
+            scene.position.x = -diagram.offsets.x;
+          }
         }
       }
     });
@@ -92,6 +122,16 @@ class World {
     this.paths = {};
     this.diagrams = {};
     this.current_x = 0.0;
+    this.diagram_index = 0;
+  }
+
+  get selected() {
+    for (let diagram of Object.values(this.diagrams)) {
+      if (diagram.selected) {
+        return diagram;
+      }
+    }
+    return null;
   }
 
   async add_demo(demo) {
@@ -116,11 +156,19 @@ class World {
         } else if (this.layout == STACKED) {
           let count = Object.keys(this.diagrams).length;
           offsets.z = -count * 1.0 + 2.5;
+        } else if (this.layout == CIRCLE) {
+          offsets.z = -18.0;
+          offsets.rotate_y = -this.diagram_index * (Math.PI / 12);
         }
-        diagram = new Diagram(offsets, images[diagram_name]);
+        diagram = new Diagram(
+          this.diagram_index,
+          offsets,
+          images[diagram_name],
+        );
         this.diagrams[diagram_name] = diagram;
         await diagram.render();
         this.current_x += diagram.width / 200; // ick...
+        this.diagram_index += 1;
       }
       let [x, y] = things[diagram_name][thing_name].dot;
       let dot = diagram.add_dot(thing_name, x, y);

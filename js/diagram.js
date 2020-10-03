@@ -1,9 +1,11 @@
 class Diagram {
-  constructor(offsets, path) {
+  constructor(index, offsets, path) {
+    this.index = index;
     this.world_offsets = offsets;
     this.offsets = {};
     this.path = path;
     this.dots = {};
+    this.selected = false;
   }
 
   async render() {
@@ -36,17 +38,33 @@ class Diagram {
       ),
     );
     scene.add(this.outline);
-    this.offsets.x = 0.0;
-    if (this.world_offsets.x != undefined) {
-      this.offsets.x = this.world_offsets.x + this.width / 200 / 2;
-      this.plane.position.x = this.offsets.x;
-      this.outline.position.x = this.offsets.x;
-    }
-    this.offsets.z = 0.0;
-    if (this.world_offsets.z) {
-      this.offsets.z = this.world_offsets.z - 0.1;
-      this.plane.position.z = this.offsets.z;
-      this.outline.position.z = this.offsets.z;
+    if (this.world_offsets.rotate_y) {
+      let rotation = new THREE.Matrix4();
+      rotation.multiply(
+        new THREE.Matrix4().makeRotationY(
+          this.world_offsets.rotate_y,
+        ),
+      );
+      rotation.multiply(
+        new THREE.Matrix4().makeTranslation(0, 0, this.world_offsets.z),
+      );
+      this.plane.geometry.applyMatrix4(rotation);
+      this.outline.geometry.applyMatrix4(rotation);
+    } else {
+      // TODO: Learn why setting position.z is not the same as applying a
+      // matrix transformation.
+      this.offsets.x = 0.0;
+      if (this.world_offsets.x != undefined) {
+        this.offsets.x = this.world_offsets.x + this.width / 200 / 2;
+        this.plane.position.x = this.offsets.x;
+        this.outline.position.x = this.offsets.x;
+      }
+      this.offsets.z = 0.0;
+      if (this.world_offsets.z) {
+        this.offsets.z = this.world_offsets.z - 0.1;
+        this.plane.position.z = this.offsets.z;
+        this.outline.position.z = this.offsets.z;
+      }
     }
   }
 
@@ -63,6 +81,7 @@ class Diagram {
   }
 
   select() {
+    this.selected = true;
     this.plane.material.opacity = 1.0;
   }
 
@@ -75,6 +94,7 @@ class Diagram {
   }
 
   deselect() {
+    this.selected = false;
     this.plane.material.opacity = 0.5;
   }
 
