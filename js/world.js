@@ -34,15 +34,89 @@ async function diagrams(demo) {
   return { path, images, things };
 }
 
-const LINEAR = "linear";
-const STACKED = "stacked";
-const CIRCLE = "circle";
+class LinearLayout {
+  constructor() {
+    this.current_x = 0;
+  }
+  controls(camera, element) {
+    camera.position.set(0, 0, 7.5);
+    return new oc.MapControls(camera, element);
+  }
+  select(previous, current) {
+    if (previous) previous.deselect();
+    current.select();
+    scene.position.x = -current.offsets.x;
+  }
+  offsets() {
+    let offsets = {};
+    offsets.x = this.current_x;
+    return offsets;
+  }
+  record(diagram) {
+    this.current_x += diagram.width / 200; // ick...
+  }
+}
+
+class StackedLayout {
+  constructor() {
+    this.current_x = 0;
+  }
+  controls(camera, element) {
+    camera.position.set(0, 0, 7.5);
+    return new oc.OrbitControls(camera, element);
+  }
+  select(previous, current) {
+    if (previous) previous.deselect();
+    current.select();
+  }
+  offsets(diagrams) {
+    let offsets = {};
+    let count = Object.keys(diagrams).length;
+    offsets.z = -count * 1.0 + 2.5;
+    return offsets;
+  }
+  record(diagram) {
+    this.current_x += diagram.width / 200; // ick...
+  }
+}
+
+class CircleLayout {
+  constructor() {
+    this.diagram_index = 0;
+  }
+  controls(camera, element) {
+    camera.position.set(0, 0, 0);
+    return new oc.OrbitControls(camera, element);
+  }
+  select(previous, current) {
+    let previous_index = 0;
+    if (previous) {
+      previous_index = previous.index;
+      previous.deselect();
+    }
+    current.select();
+    let rotate_by = current.index - previous_index;
+    scene.applyMatrix4(
+      new THREE.Matrix4().makeRotationY(rotate_by * Math.PI / 12),
+    );
+  }
+  offsets() {
+    let offsets = {};
+    offsets.z = -18.0;
+    offsets.rotate_y = -this.diagram_index * (Math.PI / 12);
+    return offsets;
+  }
+  record(_diagram) {
+    this.diagram_index += 1;
+  }
+}
 
 class World {
   constructor(layout) {
-    this.layout = CIRCLE;
     if (layout) {
       this.layout = layout;
+    } else {
+      this.layout = new StackedLayout();
     }
     this.canvas = document.querySelector("#c");
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
@@ -61,23 +135,10 @@ class World {
     //   1.0,
     //   1000,
     // );
-    this.camera.position.set(0, 0, 7.5);
-    if (this.layout == LINEAR) {
-      this.controls = new oc.MapControls(this.camera, this.renderer.domElement);
-    } else if (this.layout == STACKED) {
-      this.controls = new oc.OrbitControls(
-        this.camera,
-        this.renderer.domElement,
-      );
-    } else if (this.layout == CIRCLE) {
-      this.controls = new oc.OrbitControls(
-        this.camera,
-        this.renderer.domElement,
-      );
-      this.camera.position.set(0, 0, 0);
-    } else {
-      console.log("WARN: Unknown layout", this.layout);
-    }
+    this.controls = this.layout.controls(
+      this.camera,
+      this.renderer.domElement,
+    );
     //controls.update() must be called after any manual changes to the camera's transform
     this.controls.update();
 
@@ -86,29 +147,10 @@ class World {
 
     document.addEventListener("click", (event) => {
       if (this.intersected) {
-        if (this.layout == CIRCLE) {
-          let previous_index = 0;
-          let selected = this.selected;
-          if (selected) {
-            previous_index = selected.index;
-            selected.deselect();
-          }
-          let diagram = this.intersected.userData.diagram;
-          diagram.select();
-          let rotate_by = this.selected.index - previous_index;
-          scene.applyMatrix4(
-            new THREE.Matrix4().makeRotationY(rotate_by * Math.PI / 12),
-          );
-        } else {
-          for (let diagram of Object.values(this.diagrams)) {
-            diagram.deselect();
-          }
-          let diagram = this.intersected.userData.diagram;
-          diagram.select();
-          if (this.layout == LINEAR) {
-            scene.position.x = -diagram.offsets.x;
-          }
-        }
+        this.layout.select(
+          this.selected,
+          this.intersected.userData.diagram,
+        );
       }
     });
 
@@ -121,7 +163,6 @@ class World {
 
     this.paths = {};
     this.diagrams = {};
-    this.current_x = 0.0;
     this.diagram_index = 0;
   }
 
@@ -150,25 +191,15 @@ class World {
       let thing_name = diagram_path[index].thing;
       let diagram = this.diagrams[diagram_name];
       if (!diagram) {
-        let offsets = {};
-        if (this.layout == LINEAR) {
-          offsets.x = this.current_x;
-        } else if (this.layout == STACKED) {
-          let count = Object.keys(this.diagrams).length;
-          offsets.z = -count * 1.0 + 2.5;
-        } else if (this.layout == CIRCLE) {
-          offsets.z = -18.0;
-          offsets.rotate_y = -this.diagram_index * (Math.PI / 12);
-        }
+        let offsets = this.layout.offsets(this.diagrams);
         diagram = new Diagram(
-          this.diagram_index,
+          Object.values(this.diagrams).length,
           offsets,
           images[diagram_name],
         );
         this.diagrams[diagram_name] = diagram;
         await diagram.render();
-        this.current_x += diagram.width / 200; // ick...
-        this.diagram_index += 1;
+        this.layout.record(diagram);
       }
       let [x, y] = things[diagram_name][thing_name].dot;
       let dot = diagram.add_dot(thing_name, x, y);
