@@ -1,8 +1,8 @@
 class Path {
-  constructor(world, color) {
+  constructor(diagram, color) {
     this.packets = [];
     this.dots = [];
-    this.world = world;
+    this.diagram = diagram;
     this.color = color;
   }
 
@@ -28,7 +28,11 @@ class Path {
     let transforms = [
       new THREE.Matrix4().lookAt(
         new THREE.Vector3(from.world_x, from.world_y, from.world_z),
-        new THREE.Vector3(to.world_x, to.world_y, to.world_z),
+        new THREE.Vector3(
+          to.world_x,
+          to.world_y,
+          to.world_z,
+        ),
         new THREE.Vector3(0, 0, 1),
       ),
       new THREE.Matrix4().makeRotationX(Math.PI / 2),

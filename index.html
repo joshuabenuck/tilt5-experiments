@@ -23,14 +23,8 @@
         const canvas = document.querySelector('#c');
         const renderer = new THREE.WebGLRenderer({ canvas });
 
-        // const fov = 50;
-        // const aspect = 2.5;  // the canvas default
-        // const near = 0.1;
-        // const far = 5;
-        // const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 2.0, 1000);
-        // camera.position.z = 200;
-        var controls = new oc.OrbitControls(camera, renderer.domElement);
+        var controls = new oc.MapControls(camera, renderer.domElement);
         //controls.update() must be called after any manual changes to the camera's transform
         camera.position.set(0, 0, 7.5);
         controls.update();
@@ -76,32 +70,11 @@
     <script type="text/javascript" src="js/dot.js"></script>
     <script type="text/javascript" src="js/diagram.js"></script>
     <script type="text/javascript">
-        // async function render_dot(path, images, things, index) {
-        //     let diagram_name = path[index].diagram
-        //     let thing_name = path[index].thing
-        //     let diagram = new Diagram(-index * 1.0, images[diagram_name])
-        //     await diagram.render()
-        //     let [x, y] = things[diagram_name][thing_name].dot
-        //     return diagram.add(thing_name, x, y);
-        // }
-
         (async () => {
-            // let { images, path, things } = await diagrams()
-            // console.log({ images, path, things })
-            // let dot1 = await render_dot(path, images, things, 0)
-            // let dot2 = await render_dot(path, images, things, 1)
-            // let dot3 = await render_dot(path, images, things, 2)
-            // let p1 = connect(dot1, dot2);
-            // let p2 = connect(dot2, dot3);
             let world = new World();
-            let path = await world.add_demo("npl demo");
-            let path2 = await world.add_demo("npl demo2");
-            // for (let i = 0; i < 10; i++) {
-            //     path.create_packet(Math.random());
-            //     path2.create_packet(Math.random());
-            // }
-            let packets = [...path.packets, ...path2.packets];
-            requestAnimationFrame((time) => render(time, packets));
+            await world.add_demo("npl demo");
+            await world.add_demo("npl demo2");
+            requestAnimationFrame((time) => render(time, world.packets()));
 
         })();
 

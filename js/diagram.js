@@ -1,6 +1,7 @@
 class Diagram {
   constructor(offsets, path) {
-    this.offsets = offsets;
+    this.world_offsets = offsets;
+    this.offsets = {};
     this.path = path;
     this.dots = {};
   }
@@ -27,12 +28,15 @@ class Diagram {
     this.plane = new THREE.Mesh(plane_geometry, plane_material);
     window.textures.push(texture);
     scene.add(this.plane);
-    if (this.offsets.x != undefined) {
-      let offset = this.offsets.x;
-      this.plane.position.x = offset + this.width / 200 / 2;
+    this.offsets.x = 0.0;
+    if (this.world_offsets.x != undefined) {
+      this.offsets.x = this.world_offsets.x + this.width / 200 / 2;
+      this.plane.position.x = this.offsets.x;
     }
-    if (this.offsets.z) {
-      this.plane.position.z = this.offsets.z - 0.1;
+    this.offsets.z = 0.0;
+    if (this.world_offsets.z) {
+      this.offsets.z = this.world_offsets.z - 0.1;
+      this.plane.position.z = this.offsets.z;
     }
   }
 
@@ -42,17 +46,17 @@ class Diagram {
     var sphere = new THREE.Mesh(sphereGeometry, material);
     scene.add(sphere);
     let [wx, wy] = image_to_world(x, y, this.width, this.height);
-    sphere.position.x = wx;
+    sphere.position.x = this.offsets.x + wx;
     sphere.position.y = wy;
-    sphere.position.z = this.z;
+    sphere.position.z = this.offsets.z;
     this.dots[name] = new Dot(
       name,
       x,
       y,
-      this.z,
+      this.offsets,
       this.width,
       this.height,
-      cube,
+      sphere,
     );
     return this.dots[name];
   }

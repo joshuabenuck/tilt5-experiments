@@ -3,23 +3,25 @@ class Dot {
     name,
     image_x,
     image_y,
-    world_z,
+    offsets,
     image_width,
     image_height,
     shape,
   ) {
     this.name = name;
+    this.offsets = offsets;
+    this.world_z = offsets.z;
     this.image_width = image_width;
     this.image_height = image_height;
     this.image_x = image_x;
     this.image_y = image_y;
-    this.world_z = world_z;
     this.shape = shape;
   }
 
   set image_x(x) {
     this._image_x = x;
-    this.world_x = this.image_x_to_world_x(x, this.image_width);
+    this.world_x = this.offsets.x +
+      this.image_x_to_world_x(x, this.image_width);
   }
 
   get image_x() {

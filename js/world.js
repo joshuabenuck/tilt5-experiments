@@ -53,14 +53,13 @@ class World {
     let index = 0;
     let path = new Path(this, colors[color_index]);
     for (let entry of diagram_path) {
-      console.log({ current_x: this.current_x });
       let diagram_name = diagram_path[index].diagram;
       let thing_name = diagram_path[index].thing;
       let diagram = this.diagrams[diagram_name];
       if (!diagram) {
-        let count = Object.keys(this.diagrams).length;
         let offsets = {};
         offsets.x = this.current_x;
+        // let count = Object.keys(this.diagrams).length;
         // offsets.z = -count * 1.0 + 2.5;
         diagram = new Diagram(offsets, images[diagram_name]);
         this.diagrams[diagram_name] = diagram;
@@ -83,10 +82,11 @@ class World {
 
   packets() {
     let packets = [];
-    for (let path of this.paths.values()) {
+    for (let path of Object.values(this.paths)) {
       for (let packet of path.packets) {
         packets.push(packet);
       }
     }
+    return packets;
   }
 }

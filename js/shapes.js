@@ -27,7 +27,7 @@ function cube(wx, wy, wz) {
 
 function cylinder(length, transform, x, y, z, color) {
   var geometry = new THREE.CylinderGeometry(0.02, 0.02, length, 32);
-  geometry.applyMatrix(transform);
+  geometry.applyMatrix4(transform);
   var material = new THREE.MeshBasicMaterial({ color });
   var cyl = new THREE.Mesh(geometry, material);
   cyl.position.x = x;
