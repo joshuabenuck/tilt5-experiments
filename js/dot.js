@@ -6,7 +6,6 @@ class Dot {
     offsets,
     image_width,
     image_height,
-    shape,
   ) {
     this.name = name;
     this.offsets = offsets;
@@ -15,7 +14,14 @@ class Dot {
     this.image_height = image_height;
     this.image_x = image_x;
     this.image_y = image_y;
-    this.shape = shape;
+    let sphereGeometry = new THREE.SphereGeometry(0.04, 32, 32);
+    var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var sphere = new THREE.Mesh(sphereGeometry, material);
+    scene.add(sphere);
+    sphere.position.x = this.world_x;
+    sphere.position.y = this.world_y;
+    sphere.position.z = this.world_z;
+    this.shape = sphere;
   }
 
   set image_x(x) {

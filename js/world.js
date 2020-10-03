@@ -36,6 +36,30 @@ async function diagrams(demo) {
 
 class World {
   constructor() {
+    this.canvas = document.querySelector("#c");
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+
+    this.camera = new THREE.PerspectiveCamera(
+      50,
+      window.innerWidth / window.innerHeight,
+      2.0,
+      1000,
+    );
+    this.controls = new oc.MapControls(this.camera, this.renderer.domElement);
+    //controls.update() must be called after any manual changes to the camera's transform
+    this.camera.position.set(0, 0, 7.5);
+    this.controls.update();
+
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+
+    document.addEventListener("mousemove", (event) => {
+      event.preventDefault();
+
+      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    }, false);
+
     this.paths = {};
     this.diagrams = {};
     this.current_x = 0.0;
@@ -88,5 +112,36 @@ class World {
       }
     }
     return packets;
+  }
+
+  render(time, packets) {
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    let intersects = this.raycaster.intersectObjects(scene.children);
+    if (intersects.length > 0) {
+      if (this.INTERSECTED != intersects[0].object) {
+        if (this.INTERSECTED) this.INTERSECTED.material.opacity = 0.5;
+        this.INTERSECTED = intersects[0].object;
+        this.INTERSECTED.material.opacity = 1.0;
+      }
+    } else {
+      if (this.INTERSECTED) this.INTERSECTED.material.opacity = 0.5;
+      this.INTERSECTED = null;
+    }
+    for (let packet of packets) {
+      packet.tick();
+    }
+    requestAnimationFrame((time) => this.render(time, packets));
+
+    // required if controls.enableDamping or controls.autoRotate are set to true
+    this.controls.update();
+
+    this.renderer.render(scene, this.camera);
+
+    // canvas.toBlob((blob) => {
+    //     socket.send(blob);
+    // });
+    // show.src = canvas.toDataURL();
+    let ms = Date.now();
+    // console.log(ms);
   }
 }

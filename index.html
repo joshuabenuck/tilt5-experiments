@@ -14,20 +14,17 @@
 <body>
     <canvas id="c" width="1375px" height="800px"></canvas>
     <img id="show" href="#"></img>
+    <script type="text/javascript" src="js/shapes.js"></script>
+    <script type="text/javascript" src="js/world.js"></script>
+    <script type="text/javascript" src="js/path.js"></script>
+    <script type="text/javascript" src="js/packet.js"></script>
+    <script type="text/javascript" src="js/dot.js"></script>
+    <script type="text/javascript" src="js/diagram.js"></script>
     <script type="module">
         import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
         import * as oc from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/examples/jsm/controls/OrbitControls.js';
 
         // http://found.ward.bay.wiki.org/threejs-fundamentals.html
-
-        const canvas = document.querySelector('#c');
-        const renderer = new THREE.WebGLRenderer({ canvas });
-
-        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 2.0, 1000);
-        var controls = new oc.MapControls(camera, renderer.domElement);
-        //controls.update() must be called after any manual changes to the camera's transform
-        camera.position.set(0, 0, 7.5);
-        controls.update();
 
         const scene = new THREE.Scene();
         {
@@ -38,76 +35,16 @@
             scene.add(light);
         }
 
-        const boxWidth = 1.5;
-        const boxHeight = 1.5;
-        const boxDepth = 1.5;
-        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-
-        let raycaster = new THREE.Raycaster();
-        let mouse = new THREE.Vector2();
-
-        document.addEventListener('mousemove', (event) => {
-            event.preventDefault();
-
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        }, false);
-
         window.THREE = THREE;
-        window.renderer = renderer;
-        window.camera = camera;
-        window.controls = controls;
+        window.oc = oc;
         window.scene = scene;
-        window.textures = [];
-        window.raycaster = raycaster;
-        window.mouse = mouse;
-        window.INTERSECTED = undefined;
-    </script>
-    <script type="text/javascript" src="js/shapes.js"></script>
-    <script type="text/javascript" src="js/world.js"></script>
-    <script type="text/javascript" src="js/path.js"></script>
-    <script type="text/javascript" src="js/packet.js"></script>
-    <script type="text/javascript" src="js/dot.js"></script>
-    <script type="text/javascript" src="js/diagram.js"></script>
-    <script type="text/javascript">
+
         (async () => {
             let world = new World();
             await world.add_demo("npl demo");
             await world.add_demo("npl demo2");
-            requestAnimationFrame((time) => render(time, world.packets()));
-
+            requestAnimationFrame((time) => world.render(time, world.packets()));
         })();
-
-        function render(time, packets) {
-            raycaster.setFromCamera(mouse, camera);
-            let intersects = raycaster.intersectObjects(scene.children);
-            if (intersects.length > 0) {
-                if (INTERSECTED != intersects[0].object) {
-                    if (INTERSECTED) INTERSECTED.material.opacity = 0.5;
-                    INTERSECTED = intersects[0].object;
-                    INTERSECTED.material.opacity = 1.0;
-                }
-            } else {
-                if (INTERSECTED) INTERSECTED.material.opacity = 0.5;
-                INTERSECTED = null;
-            }
-            for (let packet of packets) {
-                packet.tick();
-            }
-            requestAnimationFrame((time) => render(time, packets));
-
-            // required if controls.enableDamping or controls.autoRotate are set to true
-            controls.update();
-
-            renderer.render(scene, camera);
-
-            // canvas.toBlob((blob) => {
-            //     socket.send(blob);
-            // });
-            // show.src = canvas.toDataURL();
-            let ms = Date.now();
-            // console.log(ms);
-        }
     </script>
 </body>
 
