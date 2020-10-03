@@ -64,12 +64,18 @@ class Diagram {
 
   select() {
     this.plane.material.opacity = 1.0;
+  }
+
+  hover() {
     this.outline.material.opacity = 1.0;
+  }
+
+  unhover() {
+    this.outline.material.opacity = 0.0;
   }
 
   deselect() {
     this.plane.material.opacity = 0.5;
-    this.outline.material.opacity = 0.0;
   }
 
   centerOn(name) {

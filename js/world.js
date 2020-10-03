@@ -34,8 +34,15 @@ async function diagrams(demo) {
   return { path, images, things };
 }
 
+const LINEAR = "linear";
+const STACKED = "stacked";
+
 class World {
-  constructor() {
+  constructor(layout) {
+    this.layout = STACKED;
+    if (layout) {
+      this.layout = layout;
+    }
     this.canvas = document.querySelector("#c");
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
@@ -45,13 +52,35 @@ class World {
       2.0,
       1000,
     );
-    this.controls = new oc.MapControls(this.camera, this.renderer.domElement);
+    if (this.layout == LINEAR) {
+      this.controls = new oc.MapControls(this.camera, this.renderer.domElement);
+    } else if (this.layout == STACKED) {
+      this.controls = new oc.OrbitControls(
+        this.camera,
+        this.renderer.domElement,
+      );
+    } else {
+      console.log("WARN: Unknown layout", this.layout);
+    }
     //controls.update() must be called after any manual changes to the camera's transform
     this.camera.position.set(0, 0, 7.5);
     this.controls.update();
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
+
+    document.addEventListener("click", (event) => {
+      if (this.intersected) {
+        for (let diagram of Object.values(this.diagrams)) {
+          diagram.deselect();
+        }
+        let diagram = this.intersected.userData.diagram;
+        diagram.select();
+        if (this.layout == LINEAR) {
+          scene.position.x = -diagram.offsets.x;
+        }
+      }
+    });
 
     document.addEventListener("mousemove", (event) => {
       event.preventDefault();
@@ -82,9 +111,12 @@ class World {
       let diagram = this.diagrams[diagram_name];
       if (!diagram) {
         let offsets = {};
-        offsets.x = this.current_x;
-        // let count = Object.keys(this.diagrams).length;
-        // offsets.z = -count * 1.0 + 2.5;
+        if (this.layout == LINEAR) {
+          offsets.x = this.current_x;
+        } else if (this.layout == STACKED) {
+          let count = Object.keys(this.diagrams).length;
+          offsets.z = -count * 1.0 + 2.5;
+        }
         diagram = new Diagram(offsets, images[diagram_name]);
         this.diagrams[diagram_name] = diagram;
         await diagram.render();
@@ -122,15 +154,13 @@ class World {
     });
     if (intersects.length > 0) {
       if (this.intersected != intersects[0].object) {
-        if (this.intersected) this.intersected.userData.diagram.deselect();
-        console.log(intersects[0].object);
+        if (this.intersected) this.intersected.userData.diagram.unhover();
         this.intersected = intersects[0].object;
         let diagram = this.intersected.userData.diagram;
-        diagram.select();
-        // this.camera.position.x = diagram.offsets.x + diagram.width / 200 / 2;
+        diagram.hover();
       }
     } else {
-      if (this.intersected) this.intersected.userData.diagram.deselect();
+      if (this.intersected) this.intersected.userData.diagram.unhover();
       this.intersected = null;
     }
     for (let packet of packets) {
