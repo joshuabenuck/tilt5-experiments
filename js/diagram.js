@@ -48,8 +48,8 @@ class Diagram {
       rotation.multiply(
         new THREE.Matrix4().makeTranslation(0, 0, this.world_offsets.z),
       );
-      this.plane.geometry.applyMatrix4(rotation);
-      this.outline.geometry.applyMatrix4(rotation);
+      this.plane.applyMatrix4(rotation);
+      this.outline.applyMatrix4(rotation);
     } else {
       // TODO: Learn why setting position.z is not the same as applying a
       // matrix transformation.
@@ -73,10 +73,10 @@ class Diagram {
       name,
       x,
       y,
-      this.offsets,
       this.width,
       this.height,
     );
+    this.plane.add(this.dots[name].shape);
     return this.dots[name];
   }
 

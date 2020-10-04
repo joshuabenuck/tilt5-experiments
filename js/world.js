@@ -150,43 +150,48 @@ class World {
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }, false);
 
-    document.querySelector(".layout").addEventListener("click", (event) => {
-      if (event.target.nodeName != "INPUT") return;
-      scene.remove(...scene.children);
-      this.camera = new THREE.PerspectiveCamera(
-        50,
-        window.innerWidth / window.innerHeight,
-        1.0,
-        1000,
-      );
-      scene.position.x = 0;
-      scene.position.y = 0;
-      scene.position.z = 0;
-      let selected = document.querySelector(".layout input:checked");
-      let layout = selected.getAttribute("id");
-      if (layout == "stacked") {
-        this.layout = new StackedLayout();
-      } else if (layout == "linear") {
-        this.layout = new LinearLayout();
-      } else if (layout == "circle") {
-        this.layout = new CircleLayout();
-      } else {
-        console.log("WARN: Invalid layout selected!");
-      }
-      this.controls = this.layout.controls(
-        this.camera,
-        this.renderer.domElement,
-      );
-      //controls.update() must be called after any manual changes to the camera's transform
-      this.controls.update();
-      this.paths = {};
-      this.diagrams = {};
-      this.diagram_index = 0;
-      for (let demo of this.demos) {
-        this.add_demo(demo);
-      }
-    }, false);
-    document.querySelector(".layout input[id='linear']").click();
+    document.querySelector(".layout").addEventListener(
+      "click",
+      async (event) => {
+        if (event.target.nodeName != "INPUT") return;
+        scene.remove(...scene.children);
+        this.camera = new THREE.PerspectiveCamera(
+          50,
+          window.innerWidth / window.innerHeight,
+          1.0,
+          1000,
+        );
+        scene.position.x = 0;
+        scene.position.y = 0;
+        scene.position.z = 0;
+        scene.setRotationFromMatrix(new THREE.Matrix4());
+        let selected = document.querySelector(".layout input:checked");
+        let layout = selected.getAttribute("id");
+        if (layout == "stacked") {
+          this.layout = new StackedLayout();
+        } else if (layout == "linear") {
+          this.layout = new LinearLayout();
+        } else if (layout == "circle") {
+          this.layout = new CircleLayout();
+        } else {
+          console.log("WARN: Invalid layout selected!");
+        }
+        this.controls = this.layout.controls(
+          this.camera,
+          this.renderer.domElement,
+        );
+        //controls.update() must be called after any manual changes to the camera's transform
+        this.controls.update();
+        this.paths = {};
+        this.diagrams = {};
+        this.diagram_index = 0;
+        for (let demo of this.demos) {
+          await this.add_demo(demo);
+        }
+      },
+      false,
+    );
+    document.querySelector(".layout input[id='circle']").click();
   }
 
   get selected() {

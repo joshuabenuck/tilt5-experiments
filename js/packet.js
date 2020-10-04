@@ -23,12 +23,18 @@ class Packet {
     let tp = this.time % trip;
     this.index = Math.trunc(tp);
 
-    this.x3 = this.p1.world_x * p + this.p2.world_x * (1 - p);
-    this.y3 = this.p1.world_y * p + this.p2.world_y * (1 - p);
-    this.z3 = this.p1.world_z * p + this.p2.world_z * (1 - p);
-    this.sphere.position.x = this.x3;
-    this.sphere.position.y = this.y3;
-    this.sphere.position.z = this.z3;
+    let p1_pos = this.p1.shape.position.clone().add(
+      this.p1.shape.parent.position,
+    );
+    let p2_pos = this.p2.shape.position.clone().add(
+      this.p2.shape.parent.position,
+    );
+    let sphere_position = p1_pos.multiplyScalar(p).add(
+      p2_pos.multiplyScalar(1 - p),
+    );
+    this.sphere.position.x = sphere_position.x;
+    this.sphere.position.y = sphere_position.y;
+    this.sphere.position.z = sphere_position.z;
   }
 
   get p1() {

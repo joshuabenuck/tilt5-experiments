@@ -11,8 +11,9 @@ class Path {
       speed = 1.0;
     }
     let first = this.dots[0];
+    let pos = first.shape.position.clone().add(first.shape.parent.position);
     let packet = new Packet(
-      sphere(first.world_x, first.world_y, first.world_z),
+      sphere(pos.x, pos.y, pos.z),
       this.dots,
       speed,
     );
@@ -21,18 +22,13 @@ class Path {
   }
 
   connect(from, to, create_packet) {
-    let x_comp = Math.pow((to.world_x - from.world_x), 2);
-    let y_comp = Math.pow((to.world_y - from.world_y), 2);
-    let z_comp = Math.pow((to.world_z - from.world_z), 2);
-    let distance = Math.sqrt(x_comp + y_comp + z_comp);
+    let from_pos = from.shape.position.clone().add(from.shape.parent.position);
+    let to_pos = to.shape.position.clone().add(to.shape.parent.position);
+    let distance = to_pos.distanceTo(from_pos);
     let transforms = [
       new THREE.Matrix4().lookAt(
-        new THREE.Vector3(from.world_x, from.world_y, from.world_z),
-        new THREE.Vector3(
-          to.world_x,
-          to.world_y,
-          to.world_z,
-        ),
+        from_pos,
+        to_pos,
         new THREE.Vector3(0, 0, 1),
       ),
       new THREE.Matrix4().makeRotationX(Math.PI / 2),
@@ -45,9 +41,9 @@ class Path {
     cylinder(
       distance,
       transform,
-      from.world_x,
-      from.world_y,
-      from.world_z,
+      from_pos.x,
+      from_pos.y,
+      from_pos.z,
       this.color,
     );
     if (create_packet) {
