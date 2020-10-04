@@ -1,9 +1,18 @@
 class Path {
-  constructor(diagram, color) {
+  constructor(color) {
     this.packets = [];
     this.dots = [];
-    this.diagram = diagram;
+    this.diagrams = [];
+    this.diagram_idx = 0;
     this.color = color;
+  }
+
+  add_dot(dot) {
+    if (this.diagrams[this.diagram_idx] != dot.diagram) {
+      this.diagrams.push(dot.diagram);
+      this.diagram_idx += 1;
+    }
+    this.dots.push(dot);
   }
 
   create_packet(speed) {

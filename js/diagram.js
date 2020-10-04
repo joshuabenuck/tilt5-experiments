@@ -68,7 +68,7 @@ class Diagram {
     }
   }
 
-  add_dot(name, x, y) {
+  create_dot(name, x, y) {
     this.dots[name] = new Dot(
       name,
       x,

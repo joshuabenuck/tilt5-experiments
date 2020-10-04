@@ -216,7 +216,7 @@ class World {
     console.log({ images, diagram_path, things });
     let previous = undefined;
     let index = 0;
-    let path = new Path(this, colors[color_index]);
+    let path = new Path(colors[color_index]);
     for (let entry of diagram_path) {
       let diagram_name = diagram_path[index].diagram;
       let thing_name = diagram_path[index].thing;
@@ -233,8 +233,8 @@ class World {
         this.layout.record(diagram);
       }
       let [x, y] = things[diagram_name][thing_name].dot;
-      let dot = diagram.add_dot(thing_name, x, y);
-      path.dots.push(dot);
+      let dot = diagram.create_dot(thing_name, x, y);
+      path.add_dot(dot);
       if (previous) {
         path.connect(previous, dot, path.packets.length == 0);
       }
