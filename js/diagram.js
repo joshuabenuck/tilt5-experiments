@@ -97,11 +97,4 @@ class Diagram {
     this.selected = false;
     this.plane.material.opacity = 0.5;
   }
-
-  centerOn(name) {
-    let [x, y, _c] = this.dots[name];
-    let [plane_x, plane_y] = image_to_world(x, y, this.width, this.height);
-    this.plane.position.x = -plane_x;
-    this.plane.position.y = -plane_y;
-  }
 }

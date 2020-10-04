@@ -13,7 +13,7 @@ class Path {
     let first = this.dots[0];
     let pos = first.shape.position.clone().add(first.shape.parent.position);
     let packet = new Packet(
-      sphere(pos.x, pos.y, pos.z),
+      sphere(pos),
       this.dots,
       speed,
     );
@@ -41,9 +41,7 @@ class Path {
     cylinder(
       distance,
       transform,
-      from_pos.x,
-      from_pos.y,
-      from_pos.z,
+      from_pos,
       this.color,
     );
     if (create_packet) {

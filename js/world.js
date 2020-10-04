@@ -191,7 +191,7 @@ class World {
       },
       false,
     );
-    document.querySelector(".layout input[id='circle']").click();
+    document.querySelector(".layout input[id='stacked']").click();
   }
 
   get selected() {
