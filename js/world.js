@@ -118,15 +118,10 @@ class World {
     } else {
       this.layout = new StackedLayout();
     }
+    this.demos = [];
     this.canvas = document.querySelector("#c");
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
-    this.camera = new THREE.PerspectiveCamera(
-      50,
-      window.innerWidth / window.innerHeight,
-      1.0,
-      1000,
-    );
     // this.camera = new THREE.OrthographicCamera(
     //   window.innerWidth / -2,
     //   window.innerWidth / 2,
@@ -135,12 +130,6 @@ class World {
     //   1.0,
     //   1000,
     // );
-    this.controls = this.layout.controls(
-      this.camera,
-      this.renderer.domElement,
-    );
-    //controls.update() must be called after any manual changes to the camera's transform
-    this.controls.update();
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
@@ -161,9 +150,43 @@ class World {
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }, false);
 
-    this.paths = {};
-    this.diagrams = {};
-    this.diagram_index = 0;
+    document.querySelector(".layout").addEventListener("click", (event) => {
+      if (event.target.nodeName != "INPUT") return;
+      scene.remove(...scene.children);
+      this.camera = new THREE.PerspectiveCamera(
+        50,
+        window.innerWidth / window.innerHeight,
+        1.0,
+        1000,
+      );
+      scene.position.x = 0;
+      scene.position.y = 0;
+      scene.position.z = 0;
+      let selected = document.querySelector(".layout input:checked");
+      let layout = selected.getAttribute("id");
+      if (layout == "stacked") {
+        this.layout = new StackedLayout();
+      } else if (layout == "linear") {
+        this.layout = new LinearLayout();
+      } else if (layout == "circle") {
+        this.layout = new CircleLayout();
+      } else {
+        console.log("WARN: Invalid layout selected!");
+      }
+      this.controls = this.layout.controls(
+        this.camera,
+        this.renderer.domElement,
+      );
+      //controls.update() must be called after any manual changes to the camera's transform
+      this.controls.update();
+      this.paths = {};
+      this.diagrams = {};
+      this.diagram_index = 0;
+      for (let demo of this.demos) {
+        this.add_demo(demo);
+      }
+    }, false);
+    document.querySelector(".layout input[id='linear']").click();
   }
 
   get selected() {
@@ -176,6 +199,9 @@ class World {
   }
 
   async add_demo(demo) {
+    if (this.demos.indexOf(demo) == -1) {
+      this.demos.push(demo);
+    }
     let colors = [
       0x3df3df,
       0x73d73d,
@@ -225,7 +251,7 @@ class World {
     return packets;
   }
 
-  render(time, packets) {
+  render(time) {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     let intersects = this.raycaster.intersectObjects(scene.children);
     intersects = intersects.filter((i) => {
@@ -242,10 +268,10 @@ class World {
       if (this.intersected) this.intersected.userData.diagram.unhover();
       this.intersected = null;
     }
-    for (let packet of packets) {
+    for (let packet of this.packets()) {
       packet.tick();
     }
-    requestAnimationFrame((time) => this.render(time, packets));
+    requestAnimationFrame((time) => this.render(time));
 
     // required if controls.enableDamping or controls.autoRotate are set to true
     this.controls.update();

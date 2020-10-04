@@ -9,10 +9,62 @@
         // });
 
     </script>
+    <style>
+        .hud {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+        }
+
+        .layout {
+            background-color: black;
+            color: white;
+            top: 0;
+            left: 0;
+            position: absolute;
+            padding: 10px;
+        }
+
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .layout input {
+            display: none;
+        }
+
+        .layout>label {
+            padding: 5px;
+            background-color: black;
+            color: white;
+            border: solid 1px white;
+        }
+
+        .layout>label:hover {
+            background-color: gray;
+        }
+
+        .layout :checked+label {
+            background-color: white;
+            color: black;
+        }
+    </style>
 </head>
 
 <body>
-    <canvas id="c" width="1375px" height="800px"></canvas>
+    <div class="layout">
+        <span>Layout:</span>
+        <input type="radio" id="stacked" name="layout"><label for="stacked">Stacked</label></input>
+        <input type="radio" id="linear" name="layout"><label for="linear">Linear</label></input>
+        <input type="radio" id="circle" name="layout"><label for="circle">Circle</label></input>
+    </div>
+    <canvas id="c" width="1375px" height="800px">
+    </canvas>
     <img id="show" href="#"></img>
     <script type="text/javascript" src="js/shapes.js"></script>
     <script type="text/javascript" src="js/world.js"></script>
@@ -44,7 +96,7 @@
             window.world = world;
             await world.add_demo("npl demo");
             await world.add_demo("npl demo2");
-            requestAnimationFrame((time) => world.render(time, world.packets()));
+            requestAnimationFrame((time) => world.render(time));
         })();
     </script>
 </body>
