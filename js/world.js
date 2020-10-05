@@ -182,12 +182,10 @@ class World {
         );
         //controls.update() must be called after any manual changes to the camera's transform
         this.controls.update();
-        this.paths = {};
+        this.paths = [];
         this.diagrams = {};
         this.diagram_index = 0;
-        for (let demo of this.demos) {
-          await this.add_demo(demo);
-        }
+        await this.build();
       },
       false,
     );
@@ -203,52 +201,102 @@ class World {
     return null;
   }
 
-  async add_demo(demo) {
-    if (this.demos.indexOf(demo) == -1) {
-      this.demos.push(demo);
+  add_demo(demo) {
+    this.demos.push(demo);
+  }
+
+  async build() {
+    // convert to step objects
+    let paths_to_steps = [];
+    for (let demo of this.demos) {
+      let { images, path: diagram_path, things } = await diagrams(demo);
+      console.log({ images, diagram_path, things });
+      let steps = [];
+      for (let entry of diagram_path) {
+        let diagram_name = entry.diagram;
+        let thing_name = entry.thing;
+        steps.push(
+          {
+            diagram: diagram_name,
+            thing: things[diagram_name][thing_name],
+            image: images[diagram_name],
+          },
+        );
+      }
+      paths_to_steps.push(steps);
     }
+    console.log({ paths_to_steps });
+
+    // group by diagrams
+    let paths_to_diagrams = [];
+    for (let steps of paths_to_steps) {
+      let previous_image = null;
+      let path_diagrams = [];
+      let diagram = {};
+      for (let step of steps) {
+        if (step.image != previous_image) {
+          previous_image = step.image;
+          diagram = { color: step.color, image: step.image, steps: [] };
+          path_diagrams.push(diagram);
+        }
+        diagram.steps.push(step.thing);
+      }
+      paths_to_diagrams.push(path_diagrams);
+    }
+    console.log({ paths_to_diagrams });
+
+    // merge paths
+    // let diagrams = [];
+    // let step_idx = 0;
+    // while (true) {
+    //   for (let path of paths_to_diagrams) {
+    //   }
+    //   break;
+    // }
+
     let colors = [
       0x3df3df,
       0x73d73d,
     ];
-    let color_index = Object.keys(this.paths).length % colors.length;
-    let { images, path: diagram_path, things } = await diagrams(demo);
-    console.log({ images, diagram_path, things });
     let previous = undefined;
     let index = 0;
-    let path = new Path(colors[color_index]);
-    for (let entry of diagram_path) {
-      let diagram_name = diagram_path[index].diagram;
-      let thing_name = diagram_path[index].thing;
-      let diagram = this.diagrams[diagram_name];
-      if (!diagram) {
-        let offsets = this.layout.offsets(this.diagrams);
-        diagram = new Diagram(
-          Object.values(this.diagrams).length,
-          offsets,
-          images[diagram_name],
-        );
-        this.diagrams[diagram_name] = diagram;
-        await diagram.render();
-        this.layout.record(diagram);
+    for (let path_def of paths_to_diagrams) {
+      let color_index = Object.keys(this.paths).length % colors.length;
+      console.log({ path_def });
+      let path = new Path(colors[color_index]);
+      for (let diagram of path_def) {
+        console.log({ diagram });
+        let diagramobj = this.diagrams[diagram.image];
+        if (!diagramobj) {
+          let offsets = this.layout.offsets(this.diagrams);
+          diagramobj = new Diagram(
+            Object.values(this.diagrams).length,
+            offsets,
+            diagram.image,
+          );
+          this.diagrams[diagram.image] = diagramobj;
+          await diagramobj.render();
+          this.layout.record(diagramobj);
+        }
+        for (let step of diagram.steps) {
+          let [x, y] = step.dot;
+          let dot = diagramobj.create_dot("thing_name", x, y);
+          path.add_dot(dot);
+          if (previous) {
+            path.connect(previous, dot, path.packets.length == 0);
+          }
+          previous = dot;
+          index += 1;
+        }
       }
-      let [x, y] = things[diagram_name][thing_name].dot;
-      let dot = diagram.create_dot(thing_name, x, y);
-      path.add_dot(dot);
-      if (previous) {
-        path.connect(previous, dot, path.packets.length == 0);
-      }
-      previous = dot;
-      index += 1;
+      path.create_packet();
+      this.paths.push(path);
     }
-    path.create_packet();
-    this.paths[demo] = path;
-    return path;
   }
 
   packets() {
     let packets = [];
-    for (let path of Object.values(this.paths)) {
+    for (let path of this.paths) {
       for (let packet of path.packets) {
         packets.push(packet);
       }

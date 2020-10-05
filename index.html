@@ -66,6 +66,9 @@
     <canvas id="c" width="1375px" height="800px">
     </canvas>
     <img id="show" href="#"></img>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"
+        integrity="sha512-LF8ZB1iTwi4Qvkm4pekHG4a437Y9Af5ZuwbnW4GTbAWQeR2E4KW8WF+xH8b9psevV7wIlDMx1MH9YfPqgKhA/Q=="
+        crossorigin="anonymous"></script>
     <script type="text/javascript" src="js/shapes.js"></script>
     <script type="text/javascript" src="js/world.js"></script>
     <script type="text/javascript" src="js/path.js"></script>
@@ -93,9 +96,18 @@
 
         (async () => {
             let world = new World();
+            let gui = new dat.GUI();
+            let camera = gui.addFolder("Camera");
+            camera.add(world.camera.position, "x", 0.0, 10.0, 1.0);
+            camera.add(world.camera.position, "y", 0.0, 10.0, 1.0);
+            camera.add(world.camera.position, "z", 0.0, 10.0, 1.0);
+            gui.addFolder("Stacked");
+            gui.addFolder("Linear");
+            gui.addFolder("Circle");
             window.world = world;
-            await world.add_demo("npl demo");
-            await world.add_demo("npl demo2");
+            world.add_demo("npl demo");
+            world.add_demo("npl demo2");
+            await world.build();
             requestAnimationFrame((time) => world.render(time));
         })();
     </script>
