@@ -105,8 +105,8 @@
             gui.addFolder("Linear");
             gui.addFolder("Circle");
             window.world = world;
-            world.add_demo("npl demo");
-            world.add_demo("npl demo2");
+            await world.add_demo("npl demo");
+            await world.add_demo("npl demo2");
             await world.build();
             requestAnimationFrame((time) => world.render(time));
         })();

@@ -191,6 +191,7 @@ class World {
       },
       false,
     );
+    this.paths_to_diagrams = [];
     document.querySelector(".layout input[id='stacked']").click();
   }
 
@@ -203,34 +204,27 @@ class World {
     return null;
   }
 
-  add_demo(demo) {
-    this.demos.push(demo);
-  }
-
-  async build() {
+  async add_demo(demo) {
     // convert to step objects
     let paths_to_steps = [];
-    for (let demo of this.demos) {
-      let { images, path: diagram_path, things } = await diagrams(demo);
-      console.log({ images, diagram_path, things });
-      let steps = [];
-      for (let entry of diagram_path) {
-        let diagram_name = entry.diagram;
-        let thing_name = entry.thing;
-        steps.push(
-          {
-            diagram: diagram_name,
-            thing: things[diagram_name][thing_name],
-            image: images[diagram_name],
-          },
-        );
-      }
-      paths_to_steps.push(steps);
+    let { images, path: diagram_path, things } = await diagrams(demo);
+    console.log({ images, diagram_path, things });
+    let steps = [];
+    for (let entry of diagram_path) {
+      let diagram_name = entry.diagram;
+      let thing_name = entry.thing;
+      steps.push(
+        {
+          diagram: diagram_name,
+          thing: things[diagram_name][thing_name],
+          image: images[diagram_name],
+        },
+      );
     }
+    paths_to_steps.push(steps);
     console.log({ paths_to_steps });
 
     // group by diagrams
-    let paths_to_diagrams = [];
     for (let steps of paths_to_steps) {
       let previous_image = null;
       let path_diagrams = [];
@@ -243,10 +237,14 @@ class World {
         }
         diagram.steps.push(step.thing);
       }
-      paths_to_diagrams.push(path_diagrams);
+      this.paths_to_diagrams.push(path_diagrams);
     }
-    console.log({ paths_to_diagrams });
+    console.log({ paths_to_diagrams: this.paths_to_diagrams });
 
+    this.demos.push(demo);
+  }
+
+  async build() {
     // merge paths
     // let diagrams = [];
     // let step_idx = 0;
@@ -262,7 +260,7 @@ class World {
     ];
     let previous = undefined;
     let index = 0;
-    for (let path_def of paths_to_diagrams) {
+    for (let path_def of this.paths_to_diagrams) {
       let color_index = Object.keys(this.paths).length % colors.length;
       console.log({ path_def });
       let path = new Path(colors[color_index]);
