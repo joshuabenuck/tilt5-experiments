@@ -83,6 +83,8 @@ class StackedLayout {
 class CircleLayout {
   constructor() {
     this.diagram_index = 0;
+    this.degrees = Math.PI / 6;
+    this.radius = 8.0;
   }
   controls(camera, element) {
     camera.position.set(0, 0, 0);
@@ -97,13 +99,13 @@ class CircleLayout {
     current.select();
     let rotate_by = current.index - previous_index;
     scene.applyMatrix4(
-      new THREE.Matrix4().makeRotationY(rotate_by * Math.PI / 12),
+      new THREE.Matrix4().makeRotationY(rotate_by * this.degrees),
     );
   }
   offsets() {
     let offsets = {};
-    offsets.z = -18.0;
-    offsets.rotate_y = -this.diagram_index * (Math.PI / 12);
+    offsets.z = -this.radius;
+    offsets.rotate_y = -this.diagram_index * this.degrees;
     return offsets;
   }
   record(_diagram) {
