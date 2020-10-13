@@ -152,29 +152,78 @@ class World {
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }, false);
 
+    this.layout_stacked = new StackedLayout();
+    this.layout_linear = new LinearLayout();
+    this.layout_circle = new CircleLayout();
+
+    this.camera = new THREE.PerspectiveCamera(
+      50,
+      window.innerWidth / window.innerHeight,
+      1.0,
+      1000,
+    );
+
+    // setup dat gui controls
+    this.gui = new dat.GUI();
+    let camera = this.gui.addFolder("Camera");
+    camera.add(this.camera.position, "x", 0.0, 10.0, 1.0);
+    camera.add(this.camera.position, "y", 0.0, 10.0, 1.0);
+    camera.add(this.camera.position, "z", 0.0, 10.0, 1.0);
+    camera.add(
+      this.camera.rotation,
+      "x",
+      Math.PI / 180,
+      Math.PI * 2,
+      Math.PI / 180,
+    ).name("x angle");
+    camera.add(
+      this.camera.rotation,
+      "y",
+      Math.PI / 180,
+      Math.PI * 2,
+      Math.PI / 180,
+    ).name("y angle");
+    camera.add(
+      this.camera.rotation,
+      "z",
+      Math.PI / 180,
+      Math.PI * 2,
+      Math.PI / 180,
+    ).name("z angle");
+    let stacked = this.gui.addFolder("Stacked");
+    let linear = this.gui.addFolder("Linear");
+    let circle = this.gui.addFolder("Circle");
+    circle.add(this.layout_circle, "radius", 0.5, 20, 1.0);
+    circle.add(
+      this.layout_circle,
+      "degrees",
+      Math.PI / 180,
+      Math.PI * 2,
+      Math.PI / 180,
+    );
+
     document.querySelector(".layout").addEventListener(
       "click",
       async (event) => {
         if (event.target.nodeName != "INPUT") return;
+
+        // reset scene
         scene.remove(...scene.children);
-        this.camera = new THREE.PerspectiveCamera(
-          50,
-          window.innerWidth / window.innerHeight,
-          1.0,
-          1000,
-        );
         scene.position.x = 0;
         scene.position.y = 0;
         scene.position.z = 0;
         scene.setRotationFromMatrix(new THREE.Matrix4());
+
+        // reset camera
+
         let selected = document.querySelector(".layout input:checked");
         let layout = selected.getAttribute("id");
         if (layout == "stacked") {
-          this.layout = new StackedLayout();
+          this.layout = this.layout_stacked;
         } else if (layout == "linear") {
-          this.layout = new LinearLayout();
+          this.layout = this.layout_linear;
         } else if (layout == "circle") {
-          this.layout = new CircleLayout();
+          this.layout = this.layout_circle;
         } else {
           console.log("WARN: Invalid layout selected!");
         }

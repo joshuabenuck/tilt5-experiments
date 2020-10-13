@@ -97,14 +97,6 @@
 
         (async () => {
             let world = new World();
-            let gui = new dat.GUI();
-            let camera = gui.addFolder("Camera");
-            camera.add(world.camera.position, "x", 0.0, 10.0, 1.0);
-            camera.add(world.camera.position, "y", 0.0, 10.0, 1.0);
-            camera.add(world.camera.position, "z", 0.0, 10.0, 1.0);
-            gui.addFolder("Stacked");
-            gui.addFolder("Linear");
-            gui.addFolder("Circle");
             window.world = world;
             await world.add_demo("npl demo");
             await world.add_demo("npl demo2");
