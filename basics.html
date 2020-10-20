@@ -1,0 +1,85 @@
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+            font: 11px 'Lucida Grande', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c" width="1375px" height="800px">
+    </canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"
+        integrity="sha512-LF8ZB1iTwi4Qvkm4pekHG4a437Y9Af5ZuwbnW4GTbAWQeR2E4KW8WF+xH8b9psevV7wIlDMx1MH9YfPqgKhA/Q=="
+        crossorigin="anonymous"></script>
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/build/three.module.js';
+        import * as oc from 'https://threejsfundamentals.org/threejs/resources/threejs/r113/examples/jsm/controls/OrbitControls.js';
+
+        // http://found.ward.bay.wiki.org/threejs-fundamentals.html
+
+        function sphere(wp) {
+            let geometry = new THREE.SphereGeometry(0.06, 32, 32);
+            let material = new THREE.MeshBasicMaterial({ color: 0x448800 });
+            let shape = new THREE.Mesh(geometry, material);
+            shape.position.x = wp.x;
+            shape.position.y = wp.y;
+            shape.position.z = wp.z;
+            return shape;
+        }
+
+        function plane(wp) {
+            var geometry = new THREE.PlaneGeometry(
+                this.width / 200,
+                this.height / 200,
+            );
+            let material = new THREE.MeshBasicMaterial(
+                { map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.5 },
+            );
+            // let material = new THREE.MeshBasicMaterial({ color: 0x777777 });
+            let shape = new THREE.Mesh(geometry, material);
+            shape.position.x = wp.x;
+            shape.position.y = wp.y;
+            shape.position.z = wp.z;
+            return shape;
+        }
+
+        const scene = new THREE.Scene();
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(-1, 2, 4);
+        scene.add(light);
+
+        let canvas = document.querySelector("#c");
+        let renderer = new THREE.WebGLRenderer({ canvas });
+
+        let camera = new THREE.PerspectiveCamera(
+            50,
+            window.innerWidth / window.innerHeight,
+            1.0,
+            1000,
+        );
+        camera.position.set(0, 0, 10.0);
+
+        // Add a sphere in the center of the screen on a plane
+        scene.add(sphere(new THREE.Vector3(0.0, 0.0, 0.0)));
+
+        // Add a sphere to a plane, rotate it
+
+        window.THREE = THREE;
+        window.oc = oc;
+        window.scene = scene;
+
+        (async () => {
+            // requestAnimationFrame((time) => world.render(time));
+            renderer.render(scene, camera);
+        })();
+    </script>
+</body>
+
+</html>
