@@ -22,9 +22,12 @@
 
         // http://found.ward.bay.wiki.org/threejs-fundamentals.html
 
-        function sphere(wp) {
+        const GREEN = 0x448800;
+        const RED = 0xff0000;
+
+        function sphere(wp, color) {
             let geometry = new THREE.SphereGeometry(0.06, 32, 32);
-            let material = new THREE.MeshBasicMaterial({ color: 0x448800 });
+            let material = new THREE.MeshBasicMaterial({ color });
             let shape = new THREE.Mesh(geometry, material);
             shape.position.x = wp.x;
             shape.position.y = wp.y;
@@ -32,20 +35,43 @@
             return shape;
         }
 
-        function plane(wp) {
-            var geometry = new THREE.PlaneGeometry(
-                this.width / 200,
-                this.height / 200,
+        // wp - world position - Vector3
+        function plane() {
+            let geometry = new THREE.PlaneGeometry(
+                2.0,
+                2.0,
             );
             let material = new THREE.MeshBasicMaterial(
-                { map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.5 },
+                // { side: THREE.DoubleSide, transparent: true, opacity: 0.5, color: 0x777777 },
+                { side: THREE.DoubleSide, color: 0x444444 },
             );
             // let material = new THREE.MeshBasicMaterial({ color: 0x777777 });
             let shape = new THREE.Mesh(geometry, material);
-            shape.position.x = wp.x;
-            shape.position.y = wp.y;
-            shape.position.z = wp.z;
             return shape;
+        }
+
+        // API structure brainstorming...
+        // function rotateX(shape, radians) {
+        //     shape.applyMatrix4(new Matrix4().makeRotationX(radians));
+        // }
+        // let transforms = [
+        //     new Matrix4().makeRotationX(),
+        //     new Matrix4().makeRotationX(),
+        // ];
+        // let transforms = new Matrix4().makeRotationX().multiply(new Matrix4().makeRotationX())
+        // let shape = scene.add(new plane().rotateX().rotateZ());
+        // rotateX(shape);
+        // rotateY(shape);
+        // scene.add(shape);
+
+        function diagram(wp) {
+            let p = plane(wp);
+
+            p.add(sphere(new THREE.Vector3(0.0, 0.0, 0.0), RED));
+            p.add(sphere(new THREE.Vector3(-1.0, -1.0, 0.0), RED));
+            p.add(sphere(new THREE.Vector3(1.0, -1.0, 0.0), RED));
+
+            return p;
         }
 
         const scene = new THREE.Scene();
@@ -66,18 +92,44 @@
         );
         camera.position.set(0, 0, 10.0);
 
-        // Add a sphere in the center of the screen on a plane
-        scene.add(sphere(new THREE.Vector3(0.0, 0.0, 0.0)));
+        let controls = new oc.OrbitControls(camera, canvas);
 
-        // Add a sphere to a plane, rotate it
+        let gui = new dat.GUI();
+
+        let shoulder1 = new THREE.Object3D();
+        scene.add(shoulder1);
+        let diagram1 = diagram(new THREE.Vector3(0.0, 0.0, 0.0));
+        shoulder1.add(diagram1);
+        scene.add(sphere(new THREE.Vector3(-1.0, 1.0, 0.0), GREEN));
+        scene.add(sphere(new THREE.Vector3(1.0, 1.0, 0.0), GREEN));
+        let diagram2 = diagram(new THREE.Vector3(2.1, 0.0, 0.0));
+        scene.add(diagram2);
+
+        let d1 = gui.addFolder("Diagram 1");
+        d1.add(diagram1.position, "x", -90.0, 90.0, 1.0);
+        d1.add(diagram1.position, "y", -90.0, 90.0, 1.0);
+        d1.add(diagram1.position, "z", -90.0, 90.0, 1.0);
+        d1.add(diagram1.rotation, "x", -9.0, 9.0, 0.1).name("deg x");
+        d1.add(diagram1.rotation, "y", -9.0, 9.0, 0.1).name("deg y");
+        d1.add(diagram1.rotation, "z", -9.0, 9.0, 0.1).name("deg z");
+        d1.add(shoulder1.rotation, "x", -9.0, 9.0, 0.1).name("shoulder x");
+        d1.add(shoulder1.rotation, "y", -9.0, 9.0, 0.1).name("shoulder y");
+        d1.add(shoulder1.rotation, "z", -9.0, 9.0, 0.1).name("shoulder z");
 
         window.THREE = THREE;
         window.oc = oc;
         window.scene = scene;
 
         (async () => {
-            // requestAnimationFrame((time) => world.render(time));
-            renderer.render(scene, camera);
+            function render() {
+                // update position of spheres
+                // position sphere1 at diagram1's upper left hand corner
+
+                renderer.render(scene, camera);
+                controls.update();
+                requestAnimationFrame(render);
+            }
+            requestAnimationFrame(render);
         })();
     </script>
 </body>
