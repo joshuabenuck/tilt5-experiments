@@ -64,8 +64,8 @@
         // rotateY(shape);
         // scene.add(shape);
 
-        function diagram(wp) {
-            let p = plane(wp);
+        function diagram() {
+            let p = plane();
 
             p.add(sphere(new THREE.Vector3(0.0, 0.0, 0.0), RED));
             p.add(sphere(new THREE.Vector3(-1.0, -1.0, 0.0), RED));
@@ -98,17 +98,20 @@
 
         let shoulder1 = new THREE.Object3D();
         scene.add(shoulder1);
-        let diagram1 = diagram(new THREE.Vector3(0.0, 0.0, 0.0));
+        let diagram1 = diagram();
         shoulder1.add(diagram1);
-        scene.add(sphere(new THREE.Vector3(-1.0, 1.0, 0.0), GREEN));
-        scene.add(sphere(new THREE.Vector3(1.0, 1.0, 0.0), GREEN));
-        let diagram2 = diagram(new THREE.Vector3(2.1, 0.0, 0.0));
+        let d1_sphere1 = sphere(new THREE.Vector3(-1.0, 1.0, 0.0), GREEN);
+        scene.add(d1_sphere1);
+        let d1_sphere2 = sphere(new THREE.Vector3(1.0, 1.0, 0.0), GREEN);
+        scene.add(d1_sphere2);
+        let diagram2 = diagram();
+        diagram2.position.x = 2.1;
         scene.add(diagram2);
 
         let d1 = gui.addFolder("Diagram 1");
-        d1.add(diagram1.position, "x", -90.0, 90.0, 1.0);
-        d1.add(diagram1.position, "y", -90.0, 90.0, 1.0);
-        d1.add(diagram1.position, "z", -90.0, 90.0, 1.0);
+        d1.add(diagram1.position, "x", -9.0, 9.0, 0.05);
+        d1.add(diagram1.position, "y", -9.0, 9.0, 0.05);
+        d1.add(diagram1.position, "z", -9.0, 9.0, 0.05);
         d1.add(diagram1.rotation, "x", -9.0, 9.0, 0.1).name("deg x");
         d1.add(diagram1.rotation, "y", -9.0, 9.0, 0.1).name("deg y");
         d1.add(diagram1.rotation, "z", -9.0, 9.0, 0.1).name("deg z");
@@ -120,13 +123,19 @@
         window.oc = oc;
         window.scene = scene;
 
+        let prev_d1_pos = undefined;
         (async () => {
             function render() {
                 // update position of spheres
                 // position sphere1 at diagram1's upper left hand corner
+                controls.update();
+                let sphere1_pos = new THREE.Vector3(-1.0, 1.0, 0.0);
+                sphere1_pos = diagram1.localToWorld(sphere1_pos);
+                d1_sphere1.position.x = sphere1_pos.x;
+                d1_sphere1.position.y = sphere1_pos.y;
+                d1_sphere1.position.z = sphere1_pos.z;
 
                 renderer.render(scene, camera);
-                controls.update();
                 requestAnimationFrame(render);
             }
             requestAnimationFrame(render);
