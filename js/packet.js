@@ -23,12 +23,8 @@ class Packet {
     let tp = this.time % trip;
     this.index = Math.trunc(tp);
 
-    let p1_pos = this.p1.shape.position.clone().add(
-      this.p1.shape.parent.position,
-    );
-    let p2_pos = this.p2.shape.position.clone().add(
-      this.p2.shape.parent.position,
-    );
+    let p1_pos = this.p1.shape.parent.localToWorld(this.p1.shape.position.clone());
+    let p2_pos = this.p2.shape.parent.localToWorld(this.p2.shape.position.clone());
     let sphere_position = p1_pos.multiplyScalar(p).add(
       p2_pos.multiplyScalar(1 - p),
     );

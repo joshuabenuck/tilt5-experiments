@@ -31,8 +31,8 @@ class Path {
   }
 
   connect(from, to, create_packet) {
-    let from_pos = from.shape.position.clone().add(from.shape.parent.position);
-    let to_pos = to.shape.position.clone().add(to.shape.parent.position);
+    let from_pos = from.shape.parent.localToWorld(from.shape.position.clone());
+    let to_pos = to.shape.parent.localToWorld(to.shape.position.clone());
     let distance = to_pos.distanceTo(from_pos);
     let transforms = [
       new THREE.Matrix4().lookAt(

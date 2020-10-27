@@ -307,9 +307,9 @@ class World {
       0x3df3df,
       0x73d73d,
     ];
-    let previous = undefined;
     let index = 0;
     for (let path_def of this.paths_to_diagrams) {
+      let previous = undefined;
       let color_index = Object.keys(this.paths).length % colors.length;
       console.log({ path_def });
       let path = new Path(colors[color_index]);
@@ -332,6 +332,8 @@ class World {
           let dot = diagramobj.create_dot("thing_name", x, y);
           path.add_dot(dot);
           if (previous) {
+            previous.shape.parent.updateWorldMatrix(true, false);
+            dot.shape.parent.updateWorldMatrix(true, false);
             path.connect(previous, dot, path.packets.length == 0);
           }
           previous = dot;
