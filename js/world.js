@@ -63,7 +63,9 @@ class StackedLayout {
   }
   controls(camera, element) {
     camera.position.set(0, 0, 7.5);
-    return new oc.OrbitControls(camera, element);
+    let controls = new oc.OrbitControls(camera, element);
+    controls.enableKeys = false;
+    return controls;
   }
   select(previous, current) {
     if (previous) previous.deselect();
@@ -143,6 +145,40 @@ class World {
           this.intersected.userData.diagram,
         );
       }
+    });
+
+    document.querySelector("body").addEventListener("keydown", (event) => {
+      if (event.key == "ArrowUp") {
+        if (!this.selected) return;
+        if (Math.abs(this.selected.plane.position.z) <= 0.001) return;
+        let z_pos = this.selected.plane.position.z;
+        let new_z_pos = z_pos + 1.0;
+        for (let d of Object.values(this.diagrams)) {
+          if (Math.abs(d.plane.position.z - new_z_pos) < 0.001) {
+            d.outline.position.z = z_pos;
+            d.plane.position.z = z_pos;
+            this.selected.outline.position.z = new_z_pos;
+            this.selected.plane.position.z = new_z_pos;
+          }
+        }
+        console.log(this.selected_index)
+      }
+      if (event.key == "ArrowDown") {
+        if (!this.selected) return;
+        if (Math.abs(this.selected.plane.position.z + 1.6) <= 0.001 ) return;
+        let z_pos = this.selected.plane.position.z;
+        let new_z_pos = z_pos - 1.0;
+        for (let d of Object.values(this.diagrams)) {
+          if (Math.abs(d.plane.position.z - new_z_pos) < 0.001) {
+            d.outline.position.z = z_pos;
+            d.plane.position.z = z_pos;
+            this.selected.outline.position.z = new_z_pos;
+            this.selected.plane.position.z = new_z_pos;
+          }
+        }
+        console.log(this.selected_index)
+      }
+      event.preventDefault();
     });
 
     document.addEventListener("mousemove", (event) => {
@@ -249,6 +285,17 @@ class World {
       if (diagram.selected) {
         return diagram;
       }
+    }
+    return null;
+  }
+
+  get selected_index() {
+    let index = 0;
+    for (let diagram of Object.values(this.diagrams)) {
+      if (diagram.selected) {
+        return index;
+      }
+      index += 1;
     }
     return null;
   }
