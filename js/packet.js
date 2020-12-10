@@ -9,6 +9,9 @@ class Packet {
     if (speed) {
       this.speed = speed;
     }
+    this.offset_x = (Math.random()-Math.random())*0.10;
+    this.offset_y = (Math.random()-Math.random())*0.10;
+    this.offset_z = (Math.random()-Math.random())*0.10;
   }
 
   tick() {
@@ -28,9 +31,9 @@ class Packet {
     let sphere_position = p1_pos.multiplyScalar(p).add(
       p2_pos.multiplyScalar(1 - p),
     );
-    this.sphere.position.x = sphere_position.x;
-    this.sphere.position.y = sphere_position.y;
-    this.sphere.position.z = sphere_position.z;
+    this.sphere.position.x = sphere_position.x + this.offset_x;
+    this.sphere.position.y = sphere_position.y + this.offset_y;
+    this.sphere.position.z = sphere_position.z + this.offset_z;
   }
 
   get p1() {

@@ -249,6 +249,12 @@ class World {
         scene.position.y = 0;
         scene.position.z = 0;
         scene.setRotationFromMatrix(new THREE.Matrix4());
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        // 0, 0, 7.5
+        light.position.set(-1, 2, 4);
+        scene.add(light);
 
         // reset camera
 
@@ -381,16 +387,25 @@ class World {
           if (previous) {
             previous.shape.parent.updateWorldMatrix(true, false);
             dot.shape.parent.updateWorldMatrix(true, false);
-            path.connect(previous, dot, path.packets.length == 0);
+            //path.connect(previous, dot, path.packets.length == 0);
           }
           previous = dot;
           index += 1;
         }
       }
-      path.create_packet();
+      let packet_count = 0;
+      function create_packet() {
+        path.create_packet(Math.random(), colors[color_index]);
+        packet_count++;
+        if (packet_count < 100) {
+          setTimeout(create_packet, 10)
+        }
+      }
+      setTimeout(create_packet, 0);
       this.paths.push(path);
     }
   }
+
 
   packets() {
     let packets = [];

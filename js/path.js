@@ -15,16 +15,16 @@ class Path {
     this.dots.push(dot);
   }
 
-  create_packet(speed) {
+  create_packet(speed, color) {
     if (!speed) {
       speed = 1.0;
     }
     let first = this.dots[0];
     let pos = first.shape.position.clone().add(first.shape.parent.position);
     let packet = new Packet(
-      sphere(pos),
+      sphere(pos, color),
       this.dots,
-      speed,
+      speed
     );
     this.packets.push(packet);
     return packet;

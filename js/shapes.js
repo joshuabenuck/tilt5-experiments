@@ -4,9 +4,9 @@ function image_to_world(x, y, width, height) {
   return [-w, -h];
 }
 
-function sphere(wp) {
+function sphere(wp, color) {
   let sphereGeometry = new THREE.SphereGeometry(0.06, 32, 32);
-  var material = new THREE.MeshBasicMaterial({ color: 0x448800 });
+  var material = new THREE.MeshPhongMaterial({ color, emissive: 0x072534, flatShading: false });
   var sphere = new THREE.Mesh(sphereGeometry, material);
   scene.add(sphere);
   sphere.position.x = wp.x;
