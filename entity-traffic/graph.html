@@ -1,0 +1,80 @@
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/@hpcc-js/wasm/dist/index.min.js"></script>
+  <script> var hpccWasm = window["@hpcc-js/wasm"]; </script>
+</head>
+
+<body>
+  <div id="output">waiting</div><br>
+  <div id="chart"></div>
+  <div id="detail"></div>
+
+  <script type=module>
+
+  import { start } from './objsim.js'
+
+  class View {
+    constructor(graph) {
+      this.model = {}
+      this.label = {}
+      this.t0 = Date.now()
+      this.count = 0
+      this.clock = setInterval(() => this.harvest(),100)
+      this.graph = graph
+    }
+
+    log(name, details, from) {
+      let thing = `${from} -> ${name}`
+      this.model[thing] = this.model[thing] || 0
+      this.model[thing]++
+      this.refresh()
+    }
+
+    refresh() {
+      let rows = Object.keys(this.model).sort().map(thing => `<tr><td>${thing}<td>${this.model[thing]}</tr>`)
+      output.innerHTML = `<table>${rows.join("\n")}</table>`
+    }
+
+    harvest() {
+      let rows = Object.keys(this.model).sort()
+      //display("chart", abstract(rows, 'balancer').map(thing => `${thing} [label="${label[thing]||model[thing]}"]`))
+      //rows = rows.filter((k) => !k.startsWith("user ->"))
+      this.display(this.graph, rows.map(thing => `${thing} [label="${this.model[thing]}"]`))
+    }
+
+    display(elementx, edges) {
+      let dot = `digraph { rankdir=LR; node [shape=box style=filled fillcolor=gold]; \n${edges.join("\n")} }`
+      hpccWasm.graphviz.layout(dot, "svg", "dot").then(svg => {
+        document.getElementById(elementx).innerHTML = svg;
+      })
+    }
+  }
+
+  let service = new View("chart")
+  let serviceDetails = new View("detail")
+  start(
+    (...args) => service.log(...args),
+    (...args) => serviceDetails.log(...args)
+  )
+
+  function abstract(rows, detail) {
+    let result = []
+    let thing
+    for (let row of rows) {
+      if (row.startsWith("user") && !row.startsWith("user ->")) {
+        // ignore
+      }
+      else if (row.startsWith(detail)) {
+        // ignore
+      } else if (row.endsWith(detail)) {
+        thing = row.replace(detail,'database')
+        result.push(thing)
+        label[thing] = label[thing] || 0
+        label[thing] = model[row]
+      } else {
+        result.push(row)
+      }
+    }
+    return result
+  }
+  </script>
