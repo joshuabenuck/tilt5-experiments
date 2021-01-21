@@ -14,13 +14,14 @@
   import { start } from './objsim.js'
 
   class View {
-    constructor(graph) {
+    constructor(graph, color) {
       this.model = {}
       this.label = {}
       this.t0 = Date.now()
       this.count = 0
       this.clock = setInterval(() => this.harvest(),100)
       this.graph = graph
+      this.color = color
     }
 
     log(name, details, from) {
@@ -43,15 +44,15 @@
     }
 
     display(elementx, edges) {
-      let dot = `digraph { rankdir=LR; node [shape=box style=filled fillcolor=gold]; \n${edges.join("\n")} }`
+      let dot = `digraph { rankdir=LR; node [shape=box style=filled fillcolor=${this.color}]; \n${edges.join("\n")} }`
       hpccWasm.graphviz.layout(dot, "svg", "dot").then(svg => {
         document.getElementById(elementx).innerHTML = svg;
       })
     }
   }
 
-  let service = new View("chart")
-  let serviceDetails = new View("detail")
+  let service = new View("chart", "gold")
+  let serviceDetails = new View("detail", "bisque")
   start(
     (...args) => service.log(...args),
     (...args) => serviceDetails.log(...args)
