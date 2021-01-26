@@ -4,6 +4,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 let serviceLog = (thing, details) => console.log("service:", thing, details)
 let serviceDetailsLog = (thing, details) => console.log("details:", thing, details)
 let scaleLog = (thing, details) => console.log("scale:", thing, details)
+let logPrototype = (level, thing, details) => console.log(`${level}:`, thing, details)
 
 const prob = (pcnt) => Math.random()*100 < pcnt
 const norm = (mean) => (Math.random()-Math.random()+1)*mean
@@ -74,8 +75,8 @@ class DNS {
     }
 
     find(type) {
-        let index = this.indexes[types] % this.indexes[types].length
-        this.indexes[types] += index + 1;
+        let index = this.indexes[type]
+        this.indexes[type] = (index + 1) % this.types[type].length
         return this.types[type][index] || undefined
     }
 }
@@ -83,9 +84,9 @@ class DNS {
 class Person extends Model {
     static instance = 0
     constructor(name) {
-        super()
-        this.name = name
         Person.instance += 1
+        super("user", `user${Person.instance}`)
+        this.name = name
         this.instance = Person.instance
         this.successes = 0
         this.failures = 0
@@ -94,9 +95,9 @@ class Person extends Model {
     async perform(action, param) {
         await this.networkSend(new Packet({
             dst: "webserver",
-            src: `user${this.instance}`,
+            src: this,
             nextHop: "webserver",
-            prevHop: `user${this.instance}`,
+            prevHop: this,
             op: action,
             args: [param]
         }))
@@ -125,8 +126,12 @@ class Person extends Model {
 }
 
 class WebServer extends Model {
+    constructor() {
+        super("webserver", `webserver1`)
+    }
+
     async handle({src, op, args}) {
-        return await this.perform(src, op, args[0])
+        return await this.perform(src.serviceName, op, args[0])
     }
 
     async perform(from, action, param) {
@@ -170,8 +175,8 @@ class WebServer extends Model {
 class LoadBalancer extends Model {
     static instance = 0
     constructor() {
-        super()
         LoadBalancer.instance += 1
+        super("lb", `lb${LoadBalancer.instance}`)
         this.instance = LoadBalancer.instance
         this.services = {}
         this.index = 0
@@ -192,8 +197,8 @@ class LoadBalancer extends Model {
 
     async find(service, from) {
         //serviceLog("balancer", "read", from)
-        serviceDetailsLog("lb", "read", from)
-        scaleLog("lb", "read", from)
+        serviceDetailsLog("lb", "read", from.serviceName)
+        scaleLog(this.instanceName, "read", from.serviceName)
         let index = this.index
         this.index = (this.index + 1) % this.services[service].length
         return this.services[service][this.index] || undefined
@@ -210,14 +215,14 @@ class Database {
     }
 
     handle(packet) {
-        return this.query(packet.args[0], packet.prevHop, packet.src)
+        return this.query(packet.args[0], packet.prevHop, packet.src.serviceName)
     }
 
     query(query, fromDetails, from) {
         delay(0.2)
         serviceLog("database", query, from)
-        serviceDetailsLog("database" + this.instance, query, fromDetails)
-        scaleLog("database" + this.instance, query, fromDetails)
+        serviceDetailsLog("database" + this.instance, query, fromDetails.serviceName)
+        scaleLog("database" + this.instance, query, fromDetails.instanceName)
         return "results"
     }
 }
@@ -244,7 +249,7 @@ class Source {
 
 class Backend extends Model {
     constructor() {
-        super("backend")
+        super("backend", "backend1")
     }
 
     async perform(from, action) {
