@@ -85,7 +85,7 @@ class Person extends Model {
     static instance = 0
     constructor(name) {
         Person.instance += 1
-        super("user", `user${Person.instance}`)
+        super("user", name)
         this.name = name
         this.instance = Person.instance
         this.successes = 0
@@ -126,18 +126,20 @@ class Person extends Model {
 }
 
 class WebServer extends Model {
+    static instance = 0
     constructor() {
-        super("webserver", `webserver1`)
+        WebServer.instance += 1
+        super("webserver", `webserver${WebServer.instance}`)
     }
 
     async handle({src, op, args}) {
-        return await this.perform(src.serviceName, op, args[0])
+        return await this.perform(src, op, args[0])
     }
 
     async perform(from, action, param) {
-        serviceLog("webserver", action, from.replace(/\d/, ""))
-        serviceDetailsLog("webserver", action, from)
-        scaleLog("webserver", action, from)
+        serviceLog("webserver", action, from.serviceName)
+        serviceDetailsLog("webserver", action, from.serviceName)
+        scaleLog(this.instanceName, action, from.instanceName)
         if (action == "search") {
             return await this.search(param)
         } else if (action == "browse") {
@@ -198,7 +200,7 @@ class LoadBalancer extends Model {
     async find(service, from) {
         //serviceLog("balancer", "read", from)
         serviceDetailsLog("lb", "read", from.serviceName)
-        scaleLog(this.instanceName, "read", from.serviceName)
+        scaleLog(this.instanceName, "read", from.instanceName)
         let index = this.index
         this.index = (this.index + 1) % this.services[service].length
         return this.services[service][this.index] || undefined
@@ -248,14 +250,16 @@ class Source {
 }
 
 class Backend extends Model {
+    static instance = 0
     constructor() {
-        super("backend", "backend1")
+        Backend.instance += 1
+        super("backend", `backend1${Backend.instance}`)
     }
 
     async perform(from, action) {
         serviceLog("backend", action, "source")
         serviceDetailsLog("backend", action, from)
-        scaleLog("backend", action, from)
+        scaleLog(this.instanceName, action, from)
         if (action == "create") {
             let packet = new Packet({
                 src: this,
@@ -276,6 +280,7 @@ class Backend extends Model {
 
 let dns = new DNS()
 dns.register("webserver", new WebServer())
+dns.register("webserver", new WebServer())
 let lb1 = new LoadBalancer()
 let lb2 = new LoadBalancer()
 dns.register("db1", new Database())
@@ -289,4 +294,5 @@ lb2.register("db", "db2")
 lb2.register("db", "db3")
 dns.register("lb", lb1)
 dns.register("lb", lb2)
+dns.register("backend", new Backend())
 dns.register("backend", new Backend())
