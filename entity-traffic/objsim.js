@@ -3,12 +3,14 @@ export { start }
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 let serviceLog = (thing, details) => console.log("service:", thing, details)
 let serviceDetailsLog = (thing, details) => console.log("details:", thing, details)
+let scaleLog = (thing, details) => console.log("scale:", thing, details)
 
 const prob = (pcnt) => Math.random()*100 < pcnt
 const norm = (mean) => (Math.random()-Math.random()+1)*mean
 const choose = (list) => {for (let one of list) if (prob(50)) return one; return '500 error'}
 
-function start(serviceLogger, serviceDetailsLogger) {
+// Start our "recursive descent" logger
+function start(serviceLogger, serviceDetailsLogger, scaleLogger) {
   if(serviceLogger) {
       console.log("using custom service logger")
       serviceLog = serviceLogger
@@ -17,10 +19,23 @@ function start(serviceLogger, serviceDetailsLogger) {
       console.log("using custom service details logger")
       serviceDetailsLog = serviceDetailsLogger
   }
+  if(scaleLogger) {
+      console.log("using custom scale logger")
+      scaleLog = scaleLogger
+  }
   for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) new Person(name).run()
   for (let vendor of ['amazon', 'apple', 'shopify']) new Source(vendor).run()
 }
 
+/*
+A string name of a service can be thought of as an unresolved reference
+to a service. Once it is resolved, it becomes an instance of Model
+
+src: the source of the request (an instance of Model)
+dst: the destination of the request (as a string)
+nextHop: where the packet will be sent to next (as a string)
+prevHop: the service that last touched the packet (an instance of Model)
+*/
 class Packet {
     constructor({src, dst, nextHop, prevHop, op, args}) {
         this.src = src;
@@ -33,8 +48,9 @@ class Packet {
 }
 
 class Model {
-    constructor() {
-
+    constructor(serviceName, instanceName) {
+        this.serviceName = serviceName
+        this.instanceName = instanceName
     }
 
     networkSend(packet) {
@@ -47,16 +63,20 @@ class Model {
 class DNS {
     constructor() {
         this.types = {}
+        this.indexes = {}
     }
 
     register(type, instance) {
+        this.indexes[type] = this.indexes[type] || 0
         let instances = this.types[type] || []
         instances.push(instance)
         this.types[type] = instances
     }
 
     find(type) {
-        return this.types[type][0] || undefined
+        let index = this.indexes[types] % this.indexes[types].length
+        this.indexes[types] += index + 1;
+        return this.types[type][index] || undefined
     }
 }
 
@@ -112,6 +132,7 @@ class WebServer extends Model {
     async perform(from, action, param) {
         serviceLog("webserver", action, from.replace(/\d/, ""))
         serviceDetailsLog("webserver", action, from)
+        scaleLog("webserver", action, from)
         if (action == "search") {
             return await this.search(param)
         } else if (action == "browse") {
@@ -123,10 +144,10 @@ class WebServer extends Model {
 
     async search(term) {
         let packet = new Packet({
-            src: "webserver",
+            src: this,
             dst: "db",
-            nextHop: "balancer",
-            prevHop: "webserver",
+            nextHop: "lb",
+            prevHop: this,
             op: "query",
             args: [term]
         })
@@ -135,10 +156,10 @@ class WebServer extends Model {
 
     async browse(item) {
         let packet = new Packet({
-            src: "webserver",
+            src: this,
             dst: "db",
-            nextHop: "balancer",
-            prevHop: "webserver",
+            nextHop: "lb",
+            prevHop: this,
             op: "query",
             args: [item]
         })
@@ -147,15 +168,18 @@ class WebServer extends Model {
 }
 
 class LoadBalancer extends Model {
+    static instance = 0
     constructor() {
         super()
+        LoadBalancer.instance += 1
+        this.instance = LoadBalancer.instance
         this.services = {}
         this.index = 0
     }
 
     async handle(packet) {
         let db = await this.find("db", packet.prevHop)
-        packet.prevHop = "balancer"
+        packet.prevHop = this
         packet.nextHop = db
         return await this.networkSend(packet)
     }
@@ -168,7 +192,8 @@ class LoadBalancer extends Model {
 
     async find(service, from) {
         //serviceLog("balancer", "read", from)
-        serviceDetailsLog("balancer", "read", from)
+        serviceDetailsLog("lb", "read", from)
+        scaleLog("lb", "read", from)
         let index = this.index
         this.index = (this.index + 1) % this.services[service].length
         return this.services[service][this.index] || undefined
@@ -192,6 +217,7 @@ class Database {
         delay(0.2)
         serviceLog("database", query, from)
         serviceDetailsLog("database" + this.instance, query, fromDetails)
+        scaleLog("database" + this.instance, query, fromDetails)
         return "results"
     }
 }
@@ -217,15 +243,20 @@ class Source {
 }
 
 class Backend extends Model {
+    constructor() {
+        super("backend")
+    }
+
     async perform(from, action) {
         serviceLog("backend", action, "source")
         serviceDetailsLog("backend", action, from)
+        scaleLog("backend", action, from)
         if (action == "create") {
             let packet = new Packet({
-                src: "backend",
+                src: this,
                 dst: "db",
-                nextHop: "balancer",
-                prevHop: "backend",
+                nextHop: "lb",
+                prevHop: this,
                 op: "query",
                 args: ["update"]
             })
@@ -240,12 +271,17 @@ class Backend extends Model {
 
 let dns = new DNS()
 dns.register("webserver", new WebServer())
-let balancer = new LoadBalancer()
+let lb1 = new LoadBalancer()
+let lb2 = new LoadBalancer()
 dns.register("db1", new Database())
 dns.register("db2", new Database())
 dns.register("db3", new Database())
-balancer.register("db", "db1")
-balancer.register("db", "db2")
-balancer.register("db", "db3")
-dns.register("balancer", balancer)
+lb1.register("db", "db1")
+lb1.register("db", "db2")
+lb1.register("db", "db3")
+lb2.register("db", "db1")
+lb2.register("db", "db2")
+lb2.register("db", "db3")
+dns.register("lb", lb1)
+dns.register("lb", lb2)
 dns.register("backend", new Backend())

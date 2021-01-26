@@ -8,6 +8,7 @@
   <div id="output">waiting</div><br>
   <div id="chart"></div>
   <div id="detail"></div>
+  <div id="scale"></div>
 
   <script type=module>
 
@@ -53,9 +54,11 @@
 
   let service = new View("chart", "gold")
   let serviceDetails = new View("detail", "bisque")
+  let scale = new View("scale", "lightgreen")
   start(
     (...args) => service.log(...args),
-    (...args) => serviceDetails.log(...args)
+    (...args) => serviceDetails.log(...args),
+    (...args) => scale.log(...args)
   )
 
   function abstract(rows, detail) {
