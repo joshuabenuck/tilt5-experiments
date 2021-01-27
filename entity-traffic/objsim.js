@@ -25,7 +25,10 @@ function start(serviceLogger, serviceDetailsLogger, scaleLogger) {
       scaleLog = scaleLogger
   }
   for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) new Person(name).run()
-  for (let vendor of ['amazon', 'apple', 'shopify']) new Source(vendor).run()
+  for (let vendor of ['amazon', 'apple', 'shopify']) {
+      new Source(vendor).run()
+      new Source(vendor).run()
+  }
 }
 
 /*
@@ -229,14 +232,26 @@ class Database {
     }
 }
 
-class Source {
+class Source extends Model {
+    static instances = {}
     constructor(name) {
+        let instance = Source.instances[name] || 0
+        Source.instances[name] = instance + 1
+        super(name, `${name}${instance + 1}`)
         this.name = name
     }
 
     async perform(action) {
         await delay(100)
-        dns.find("backend").perform(this.name, action)
+        let packet = new Packet({
+            src: this,
+            dst: "backend",
+            nextHop: "backend",
+            prevHop: this,
+            op: this.name,
+            args: [action]
+        })
+        return await this.networkSend(packet)
     }
 
     async run() {
@@ -253,13 +268,17 @@ class Backend extends Model {
     static instance = 0
     constructor() {
         Backend.instance += 1
-        super("backend", `backend1${Backend.instance}`)
+        super("backend", `backend${Backend.instance}`)
+    }
+
+    async handle(packet) {
+        this.perform(packet.prevHop, packet.args[0])
     }
 
     async perform(from, action) {
         serviceLog("backend", action, "source")
-        serviceDetailsLog("backend", action, from)
-        scaleLog(this.instanceName, action, from)
+        serviceDetailsLog("backend", action, from.serviceName)
+        scaleLog(this.instanceName, action, from.instanceName)
         if (action == "create") {
             let packet = new Packet({
                 src: this,
