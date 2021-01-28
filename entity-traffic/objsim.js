@@ -1,10 +1,18 @@
 export { start }
 
+/*
+Future discussions:
+- implement checkboxes to dynamically switch between service and instance
+- discuss zoom levels, implement hop to service zoom?
+- add host layer?
+- add dns lookups
+- discuss partial observability and how to represent it
+*/
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 let serviceLog = (thing, details) => console.log("service:", thing, details)
 let serviceDetailsLog = (thing, details) => console.log("details:", thing, details)
 let scaleLog = (thing, details) => console.log("scale:", thing, details)
-let logPrototype = (level, thing, details) => console.log(`${level}:`, thing, details)
 
 const prob = (pcnt) => Math.random()*100 < pcnt
 const norm = (mean) => (Math.random()-Math.random()+1)*mean
@@ -24,7 +32,7 @@ function start(serviceLogger, serviceDetailsLogger, scaleLogger) {
       console.log("using custom scale logger")
       scaleLog = scaleLogger
   }
-  for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) new Person(name).run()
+  for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) new User(name).run()
   for (let vendor of ['amazon', 'apple', 'shopify']) {
       new Source(vendor).run()
       new Source(vendor).run()
@@ -51,10 +59,17 @@ class Packet {
     }
 }
 
-class Model {
+class Service {
     constructor(serviceName, instanceName) {
         this.serviceName = serviceName
         this.instanceName = instanceName
+    }
+
+    name() {
+        if (this.serviceMode()) {
+            return this.serviceName
+        }
+        return this.instanceName
     }
 
     networkSend(packet) {
@@ -84,15 +99,20 @@ class DNS {
     }
 }
 
-class Person extends Model {
+class User extends Service {
     static instance = 0
-    constructor(name) {
-        Person.instance += 1
-        super("user", name)
-        this.name = name
-        this.instance = Person.instance
+    static serviceMode = true
+    constructor(login) {
+        User.instance += 1
+        super("user", login)
+        this.login = login
+        this.instance = User.instance
         this.successes = 0
         this.failures = 0
+    }
+
+    serviceMode() {
+        return User.serviceMode
     }
 
     async perform(action, param) {
@@ -104,7 +124,6 @@ class Person extends Model {
             op: action,
             args: [param]
         }))
-        //await dns.find("webserver").perform(from, action, param)
     }
 
     async achieve(goal) {
@@ -128,11 +147,16 @@ class Person extends Model {
     }
 }
 
-class WebServer extends Model {
+class WebServer extends Service {
     static instance = 0
+    static serviceMode = true
     constructor() {
         WebServer.instance += 1
         super("webserver", `webserver${WebServer.instance}`)
+    }
+
+    serviceMode() {
+        return WebServer.serviceMode
     }
 
     async handle({src, op, args}) {
@@ -140,9 +164,9 @@ class WebServer extends Model {
     }
 
     async perform(from, action, param) {
-        serviceLog("webserver", action, from.serviceName)
-        serviceDetailsLog("webserver", action, from.serviceName)
-        scaleLog(this.instanceName, action, from.instanceName)
+        serviceLog(this.name(), action, from.name())
+        serviceDetailsLog(this.name(), action, from.name())
+        scaleLog(this.name(), action, from.name())
         if (action == "search") {
             return await this.search(param)
         } else if (action == "browse") {
@@ -177,14 +201,19 @@ class WebServer extends Model {
     }
 }
 
-class LoadBalancer extends Model {
+class LoadBalancer extends Service {
     static instance = 0
+    static serviceMode = true
     constructor() {
         LoadBalancer.instance += 1
         super("lb", `lb${LoadBalancer.instance}`)
         this.instance = LoadBalancer.instance
         this.services = {}
         this.index = 0
+    }
+
+    serviceMode() {
+        return LoadBalancer.serviceMode
     }
 
     async handle(packet) {
@@ -201,9 +230,8 @@ class LoadBalancer extends Model {
     }
 
     async find(service, from) {
-        //serviceLog("balancer", "read", from)
-        serviceDetailsLog("lb", "read", from.serviceName)
-        scaleLog(this.instanceName, "read", from.instanceName)
+        serviceDetailsLog(this.name(), "read", from.name())
+        scaleLog(this.name(), "read", from.name())
         let index = this.index
         this.index = (this.index + 1) % this.services[service].length
         return this.services[service][this.index] || undefined
@@ -212,33 +240,45 @@ class LoadBalancer extends Model {
 
 // Reads should go to read-only replicas
 // Writes should go to either
-class Database {
+class Database extends Service {
     static instance = 0
+    static serviceMode = true
     constructor() {
         Database.instance += 1
+        let instance = Database.instance
+        super("db", `db${instance}`)
         this.instance = Database.instance
     }
 
+    serviceMode() {
+        return Database.serviceMode
+    }
+
     handle(packet) {
-        return this.query(packet.args[0], packet.prevHop, packet.src.serviceName)
+        return this.query(packet.args[0], packet.prevHop, packet.src)
     }
 
     query(query, fromDetails, from) {
         delay(0.2)
-        serviceLog("database", query, from)
-        serviceDetailsLog("database" + this.instance, query, fromDetails.serviceName)
-        scaleLog("database" + this.instance, query, fromDetails.instanceName)
+        serviceLog("database", query, from.name())
+        serviceDetailsLog(this.name(), query, fromDetails.name())
+        scaleLog(this.name(), query, fromDetails.name())
         return "results"
     }
 }
 
-class Source extends Model {
+class Source extends Service {
     static instances = {}
-    constructor(name) {
-        let instance = Source.instances[name] || 0
-        Source.instances[name] = instance + 1
-        super(name, `${name}${instance + 1}`)
-        this.name = name
+    static serviceMode = true
+    constructor(vendor) {
+        let instance = Source.instances[vendor] || 0
+        Source.instances[vendor] = instance + 1
+        super("source", vendor)
+        this.vendor = vendor
+    }
+
+    serviceMode() {
+        return Source.serviceMode
     }
 
     async perform(action) {
@@ -248,7 +288,7 @@ class Source extends Model {
             dst: "backend",
             nextHop: "backend",
             prevHop: this,
-            op: this.name,
+            op: this.op,
             args: [action]
         })
         return await this.networkSend(packet)
@@ -264,11 +304,16 @@ class Source extends Model {
     }
 }
 
-class Backend extends Model {
+class Backend extends Service {
     static instance = 0
+    static serviceMode = true
     constructor() {
         Backend.instance += 1
         super("backend", `backend${Backend.instance}`)
+    }
+
+    serviceMode() {
+        return Backend.serviceMode
     }
 
     async handle(packet) {
@@ -276,9 +321,9 @@ class Backend extends Model {
     }
 
     async perform(from, action) {
-        serviceLog("backend", action, "source")
-        serviceDetailsLog("backend", action, from.serviceName)
-        scaleLog(this.instanceName, action, from.instanceName)
+        serviceLog(this.name(), action, "source")
+        serviceDetailsLog(this.name(), action, from.name())
+        scaleLog(this.name(), action, from.name())
         if (action == "create") {
             let packet = new Packet({
                 src: this,
