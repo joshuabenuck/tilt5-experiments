@@ -6,13 +6,21 @@
 
 <body>
   <div id="output">waiting</div><br>
+  <div id="checkboxes">
+    <input id="user" type="checkbox"></input><label for="user">User</label>
+    <input id="source" type="checkbox"></input><label for="source">Source</label>
+    <input id="webserver" type="checkbox"></input><label for="webserver">WebServer</label>
+    <input id="backend" type="checkbox"></input><label for="backend">Backend</label>
+    <input id="lb" type="checkbox"></input><label for="lb">LB</label>
+    <input id="db" type="checkbox"></input><label for="db">DB</label>
+  </div>
   <div id="chart"></div>
   <div id="detail"></div>
   <div id="scale"></div>
 
   <script type=module>
 
-  import { start } from './objsim.js'
+  import { start, User, Source, WebServer, Backend, LoadBalancer, Database } from './objsim.js'
 
   class View {
     constructor(graph, color) {
@@ -80,5 +88,35 @@
       }
     }
     return result
+  }
+
+  let checkboxes = [user, source, webserver, backend, lb, db];
+  for (let checkbox of checkboxes) {
+    checkbox.addEventListener("change", (e) => {
+      if (e.target.id == "source") {
+        Source.serviceMode = !Source.serviceMode
+      }
+      if (e.target.id == "user") {
+        User.serviceMode = !User.serviceMode
+      }
+      if (e.target.id == "backend") {
+        Backend.serviceMode = !Backend.serviceMode
+      }
+      if (e.target.id == "webserver") {
+        WebServer.serviceMode = !WebServer.serviceMode
+      }
+      if (e.target.id == "lb") {
+        LoadBalancer.serviceMode = !LoadBalancer.serviceMode
+      }
+      if (e.target.id == "db") {
+        Database.serviceMode = !Database.serviceMode
+      }
+      service.model = {}
+      service.label = {}
+      serviceDetails.model = {}
+      serviceDetails.label = {}
+      scale.model = {}
+      scale.label = {}
+    })
   }
   </script>

@@ -1,4 +1,4 @@
-export { start }
+export { start, User, Source, WebServer, Backend, LoadBalancer, Database }
 
 /*
 Future discussions:
@@ -260,7 +260,7 @@ class Database extends Service {
 
     query(query, fromDetails, from) {
         delay(0.2)
-        serviceLog("database", query, from.name())
+        serviceLog(this.name(), query, from.name())
         serviceDetailsLog(this.name(), query, fromDetails.name())
         scaleLog(this.name(), query, fromDetails.name())
         return "results"
@@ -321,7 +321,7 @@ class Backend extends Service {
     }
 
     async perform(from, action) {
-        serviceLog(this.name(), action, "source")
+        serviceLog(this.name(), action, from.name())
         serviceDetailsLog(this.name(), action, from.name())
         scaleLog(this.name(), action, from.name())
         if (action == "create") {
