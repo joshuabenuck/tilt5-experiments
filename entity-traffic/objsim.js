@@ -10,28 +10,18 @@ Future discussions:
 */
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-let serviceLog = (thing, details) => console.log("service:", thing, details)
-let serviceDetailsLog = (thing, details) => console.log("details:", thing, details)
-let scaleLog = (thing, details) => console.log("scale:", thing, details)
+
+const SERVICE = 1
+const NETWORK = 2
+let log = () => console.log("unimplemented")
 
 const prob = (pcnt) => Math.random()*100 < pcnt
 const norm = (mean) => (Math.random()-Math.random()+1)*mean
 const choose = (list) => {for (let one of list) if (prob(50)) return one; return '500 error'}
 
 // Start our "recursive descent" logger
-function start(serviceLogger, serviceDetailsLogger, scaleLogger) {
-  if(serviceLogger) {
-      console.log("using custom service logger")
-      serviceLog = serviceLogger
-  }
-  if(serviceDetailsLogger) {
-      console.log("using custom service details logger")
-      serviceDetailsLog = serviceDetailsLogger
-  }
-  if(scaleLogger) {
-      console.log("using custom scale logger")
-      scaleLog = scaleLogger
-  }
+function start(model_logger) {
+  log = model_logger
   for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) new User(name).run()
   for (let vendor of ['amazon', 'apple', 'shopify']) {
       new Source(vendor).run()
@@ -159,18 +149,12 @@ class WebServer extends Service {
         return WebServer.serviceMode
     }
 
-    async handle({src, op, args}) {
-        return await this.perform(src, op, args[0])
-    }
-
-    async perform(from, action, param) {
-        serviceLog(this.name(), action, from.name())
-        serviceDetailsLog(this.name(), action, from.name())
-        scaleLog(this.name(), action, from.name())
-        if (action == "search") {
-            return await this.search(param)
-        } else if (action == "browse") {
-            return await this.browse(param)
+    async handle(packet) {
+        log(SERVICE, this, packet)
+        if (packet.op == "search") {
+            return await this.search(packet.args[0])
+        } else if (packet.op == "browse") {
+            return await this.browse(packet.args[0])
         } else {
             return 404
         }
@@ -217,7 +201,7 @@ class LoadBalancer extends Service {
     }
 
     async handle(packet) {
-        let db = await this.find("db", packet.prevHop)
+        let db = await this.find("db", packet)
         packet.prevHop = this
         packet.nextHop = db
         return await this.networkSend(packet)
@@ -229,12 +213,11 @@ class LoadBalancer extends Service {
         this.services[service] = instances
     }
 
-    async find(service, from) {
-        serviceDetailsLog(this.name(), "read", from.name())
-        scaleLog(this.name(), "read", from.name())
+    async find(service, packet) {
+        log(NETWORK, this, packet)
         let index = this.index
         this.index = (this.index + 1) % this.services[service].length
-        return this.services[service][this.index] || undefined
+        return this.services[service][index] || undefined
     }
 }
 
@@ -255,14 +238,8 @@ class Database extends Service {
     }
 
     handle(packet) {
-        return this.query(packet.args[0], packet.prevHop, packet.src)
-    }
-
-    query(query, fromDetails, from) {
         delay(0.2)
-        serviceLog(this.name(), query, from.name())
-        serviceDetailsLog(this.name(), query, fromDetails.name())
-        scaleLog(this.name(), query, fromDetails.name())
+        log(SERVICE, this, packet)
         return "results"
     }
 }
@@ -288,7 +265,7 @@ class Source extends Service {
             dst: "backend",
             nextHop: "backend",
             prevHop: this,
-            op: this.op,
+            op: action,
             args: [action]
         })
         return await this.networkSend(packet)
@@ -317,14 +294,9 @@ class Backend extends Service {
     }
 
     async handle(packet) {
-        this.perform(packet.prevHop, packet.args[0])
-    }
-
-    async perform(from, action) {
-        serviceLog(this.name(), action, from.name())
-        serviceDetailsLog(this.name(), action, from.name())
-        scaleLog(this.name(), action, from.name())
-        if (action == "create") {
+        log(SERVICE, this, packet)
+        //log(this.name(), packet.args[0], packet.prevHop.name())
+        if (packet.op == "create") {
             let packet = new Packet({
                 src: this,
                 dst: "db",
@@ -334,8 +306,8 @@ class Backend extends Service {
                 args: ["update"]
             })
             return await this.networkSend(packet)
-        } else if (action == "box") {
-        } else if (action == "bag") {
+        } else if (packet.op == "box") {
+        } else if (packet.op == "bag") {
         } else {
             return 404
         }

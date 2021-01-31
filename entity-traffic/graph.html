@@ -6,7 +6,11 @@
 
 <body>
   <div id="output">waiting</div><br>
-  <div id="checkboxes">
+  <div id="levels">
+    <!--input id="service" type="checkbox"></input><label for="service">Service</label-->
+    <input id="network" type="checkbox"></input><label for="network">Network</label>
+  </div>
+  <div id="services">
     <input id="user" type="checkbox"></input><label for="user">User</label>
     <input id="source" type="checkbox"></input><label for="source">Source</label>
     <input id="webserver" type="checkbox"></input><label for="webserver">WebServer</label>
@@ -19,7 +23,9 @@
   <div id="scale"></div>
 
   <script type=module>
-
+  const SERVICE = 1
+  const NETWORK = 2
+  let LOG_LEVEL = SERVICE
   import { start, User, Source, WebServer, Backend, LoadBalancer, Database } from './objsim.js'
 
   class View {
@@ -33,8 +39,16 @@
       this.color = color
     }
 
-    log(name, details, from) {
-      let thing = `${from} -> ${name}`
+    log(level, current, packet) {
+      if (LOG_LEVEL < level) {
+        return;
+      }
+      let thing
+      if (current.serviceName == packet.dst && LOG_LEVEL == SERVICE) {
+        thing = `${packet.src.name()} -> ${current.name()}`
+      } else {
+        thing = `${packet.prevHop.name()} -> ${current.name()}`
+      }
       this.model[thing] = this.model[thing] || 0
       this.model[thing]++
       this.refresh()
@@ -61,12 +75,8 @@
   }
 
   let service = new View("chart", "gold")
-  let serviceDetails = new View("detail", "bisque")
-  let scale = new View("scale", "lightgreen")
   start(
-    (...args) => service.log(...args),
-    (...args) => serviceDetails.log(...args),
-    (...args) => scale.log(...args)
+    (...args) => service.log(...args)
   )
 
   function abstract(rows, detail) {
@@ -90,8 +100,7 @@
     return result
   }
 
-  let checkboxes = [user, source, webserver, backend, lb, db];
-  for (let checkbox of checkboxes) {
+  for (let checkbox of [user, source, webserver, backend, lb, db]) {
     checkbox.addEventListener("change", (e) => {
       if (e.target.id == "source") {
         Source.serviceMode = !Source.serviceMode
@@ -113,10 +122,16 @@
       }
       service.model = {}
       service.label = {}
-      serviceDetails.model = {}
-      serviceDetails.label = {}
-      scale.model = {}
-      scale.label = {}
     })
   }
+  for (let checkbox of [network]) {
+    checkbox.addEventListener("change", (e) => {
+      if (e.target.id == "network") {
+        LOG_LEVEL = LOG_LEVEL == NETWORK ? SERVICE : NETWORK
+      }
+      service.model = {}
+      service.label = {}
+    })
+  }
+
   </script>
