@@ -22,6 +22,9 @@
   <div id="detail"></div>
   <div id="scale"></div>
 
+  <input id="basemap" type="checkbox"></input><label for="network">Basemap</label>
+  <div id="base"></div>
+
   <script type=module>
   const SERVICE = 1
   const NETWORK = 2
@@ -131,6 +134,20 @@
       }
       service.model = {}
       service.label = {}
+    })
+  }
+  for (let checkbox of [basemap]) {
+    checkbox.addEventListener("change", (e) => {
+      if (e.target.id == "basemap") {
+        if (e.target.checked) {
+          let rows = Object.keys(service.model).sort()
+          let edges = rows.map(thing => `${thing}`)
+          let dot = `digraph { rankdir=LR; node [shape=box style=filled fillcolor=bisque]; \n${edges.join("\n")} }`
+          hpccWasm.graphviz.layout(dot, "svg", "dot").then(svg => {base.innerHTML = svg})
+        } else {
+          base.innerHTML = ''
+        }
+      }
     })
   }
 
