@@ -8,6 +8,7 @@
   <div id="output">waiting</div><br>
   <div id="levels">
     <!--input id="service" type="checkbox"></input><label for="service">Service</label-->
+    <input id="hosts" type="checkbox"></input><label for="hosts">Hosts</label>
     <input id="network" type="checkbox"></input><label for="network">Network</label>
   </div>
   <div id="services">
@@ -29,6 +30,7 @@
   const SERVICE = 1
   const NETWORK = 2
   let LOG_LEVEL = SERVICE
+  let LOG_HOSTS = false
   import { start, User, Source, WebServer, Backend, LoadBalancer, Database } from './objsim.js'
 
   class View {
@@ -49,8 +51,14 @@
       let thing
       if (current.serviceName == packet.dst && LOG_LEVEL == SERVICE) {
         thing = `${packet.src.name()} -> ${current.name()}`
+        if (LOG_HOSTS) {
+          thing = `${packet.src.host.hostname} -> ${current.host.hostname}`
+        }
       } else {
         thing = `${packet.prevHop.name()} -> ${current.name()}`
+        if (LOG_HOSTS) {
+          thing = `${packet.prevHop.host.hostname} -> ${current.host.hostname}`
+        }
       }
       this.model[thing] = this.model[thing] || 0
       this.model[thing]++
@@ -136,6 +144,11 @@
       service.label = {}
     })
   }
+  hosts.addEventListener("change", (e) => {
+    LOG_HOSTS = !LOG_HOSTS
+    service.model = {}
+    service.label = {}
+  })
   for (let checkbox of [basemap]) {
     checkbox.addEventListener("change", (e) => {
       if (e.target.id == "basemap") {

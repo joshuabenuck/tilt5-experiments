@@ -2,11 +2,11 @@ export { start, User, Source, WebServer, Backend, LoadBalancer, Database }
 
 /*
 Future discussions:
-- implement checkboxes to dynamically switch between service and instance
-- discuss zoom levels, implement hop to service zoom?
-- add host layer?
-- add dns lookups
+- add host layer
+- add dns lookups to diagrams
+- dynamically add new diagrams w/ different configs
 - discuss partial observability and how to represent it
+- how to play back and visualize real observability data?
 */
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
@@ -22,10 +22,18 @@ const choose = (list) => {for (let one of list) if (prob(50)) return one; return
 // Start our "recursive descent" logger
 function start(model_logger) {
   log = model_logger
-  for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) new User(name).run()
+  for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) {
+      let user = new User(name)
+      user.host = new Host(`${name}_host`)
+      user.run()
+  }
   for (let vendor of ['amazon', 'apple', 'shopify']) {
-      new Source(vendor).run()
-      new Source(vendor).run()
+      let source = new Source(vendor)
+      source.host = new Host(`${vendor}_host`)
+      source.run()
+      source = new Source(vendor)
+      source.host = new Host(`${vendor}_host`)
+      source.run()
   }
 }
 
@@ -50,9 +58,10 @@ class Packet {
 }
 
 class Service {
-    constructor(serviceName, instanceName) {
+    constructor(serviceName, instanceName, host=null) {
         this.serviceName = serviceName
         this.instanceName = instanceName
+        this.host = host
     }
 
     name() {
@@ -65,7 +74,29 @@ class Service {
     networkSend(packet) {
         let nextHop = packet.nextHop
         let service = dns.find(nextHop)
+        if (service.host) {
+            // resource cost...
+            return service.host.handle(packet, service)
+        }
         return service.handle(packet)
+    }
+}
+
+class Host {
+    constructor(hostname) {
+        this.hostname = hostname
+        this.services = []
+    }
+
+    addService(service) {
+        this.services.push(service)
+        service.host = this
+    }
+
+    handle(packet, service) {
+        // ask service for cpu, ram, and disk costs
+        // tracks resource usage
+        service.handle(packet)
     }
 }
 
@@ -315,13 +346,28 @@ class Backend extends Service {
 }
 
 let dns = new DNS()
-dns.register("webserver", new WebServer())
-dns.register("webserver", new WebServer())
+let webServerHost = new Host("webserver_host")
+let webServer1 = new WebServer()
+let webServer2 = new WebServer()
+webServerHost.addService(webServer1)
+webServerHost.addService(webServer2)
+dns.register("webserver", webServer1)
+dns.register("webserver", webServer2)
 let lb1 = new LoadBalancer()
 let lb2 = new LoadBalancer()
-dns.register("db1", new Database())
-dns.register("db2", new Database())
-dns.register("db3", new Database())
+let loadBalancerHost = new Host("loadbalancer_host")
+loadBalancerHost.addService(lb1)
+loadBalancerHost.addService(lb2)
+let dbHost = new Host("db_host")
+let db1 = new Database()
+let db2 = new Database()
+let db3 = new Database()
+dbHost.addService(db1)
+dbHost.addService(db2)
+dbHost.addService(db3)
+dns.register("db1", db1)
+dns.register("db2", db2)
+dns.register("db3", db3)
 lb1.register("db", "db1")
 lb1.register("db", "db2")
 lb1.register("db", "db3")
@@ -330,5 +376,10 @@ lb2.register("db", "db2")
 lb2.register("db", "db3")
 dns.register("lb", lb1)
 dns.register("lb", lb2)
-dns.register("backend", new Backend())
-dns.register("backend", new Backend())
+let backendHost = new Host("backend_host")
+let backend1 = new Backend()
+let backend2 = new Backend()
+backendHost.addService(backend1)
+backendHost.addService(backend2)
+dns.register("backend", backend1)
+dns.register("backend", backend2)
