@@ -164,4 +164,8 @@
     })
   }
 
+  chart.addEventListener('mousedown', (e) => {
+    detail.innerHTML = `<h3>${e.target.parentElement.getElementsByTagName('title')[0].innerHTML}</h3>`
+  })
+
   </script>
