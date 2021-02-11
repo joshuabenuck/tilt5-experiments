@@ -20,6 +20,7 @@
     <input id="db" type="checkbox"></input><label for="db">DB</label>
   </div>
   <div id="chart"></div>
+  <div id="selection"></div>
   <div id="detail"></div>
 
   <input id="basemap" type="checkbox"></input><label for="network">Basemap</label>
@@ -63,30 +64,22 @@
       this.model[thing] = this.model[thing] || 0
       this.model[thing]++
       this.refresh()
-      current.host = null
-      packet.prevHop.host = null
-      packet.src.host = null
-      //console.log(SELECTION, typeof SELECTION, current.serviceName, current.instanceName)
+
+      const nohost = (key, value) => key == 'host' ? `HOST(${value.hostname})` : value
+      const stringify = (obj) => JSON.stringify(obj, nohost, 2)
+      const selected = () => {detail.innerHTML = `<pre>current ${stringify(current)}\npacket ${stringify(packet)}</pre>`}
+
       if (SELECTION && SELECTION.includes("-&gt;")) {
         let [left, right] = SELECTION.split("-&gt;")
         if ((packet.prevHop.serviceName == left ||
             packet.prevHop.instanceName == left) &&
             (current.serviceName == right ||
             current.instanceName == right)) {
-          detail.innerHTML = `<pre>
-          ${JSON.stringify(current, null, 2)}
-          ${JSON.stringify(packet, null, 2)}
-          </pre>
-          `
+          selected()
         }
       }
       else if (current.serviceName == SELECTION || current.instanceName == SELECTION) {
-        console.log("match!")
-        detail.innerHTML = `<pre>
-        ${JSON.stringify(current, null, 2)}
-        ${JSON.stringify(packet, null, 2)}
-        </pre>
-        `
+        selected()
       }
     }
 
@@ -193,7 +186,7 @@
     SELECTION = e.target.parentElement.getElementsByTagName('title')[0].innerHTML
     console.log(SELECTION)
     detail.innerHTML = "";
-    //detail.innerHTML = ` <h3>${e.target.parentElement.getElementsByTagName('title')[0].innerHTML}</h3> `
+    selection.innerHTML = `<h3>Showing <span style="background-color:gold;">${SELECTION}</span> log entries.</h3>`
   })
 
   </script>
