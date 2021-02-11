@@ -88,6 +88,14 @@ class Host {
         this.services = []
     }
 
+    addServices(services) {
+        this.services = services
+        for (let service of services) {
+            service.host = this
+        }
+        return this
+    }
+
     addService(service) {
         this.services.push(service)
         service.host = this
@@ -104,6 +112,15 @@ class DNS {
     constructor() {
         this.types = {}
         this.indexes = {}
+    }
+
+    registerAll(hosts) {
+        for (let host of hosts) {
+            for (let service of host.services) {
+                this.register(service.serviceName, service)
+                this.register(service.instanceName, service)
+            }
+        }
     }
 
     register(type, instance) {
@@ -219,12 +236,19 @@ class WebServer extends Service {
 class LoadBalancer extends Service {
     static instance = 0
     static serviceMode = true
-    constructor() {
+    constructor(registrations) {
         LoadBalancer.instance += 1
         super("lb", `lb${LoadBalancer.instance}`)
         this.instance = LoadBalancer.instance
         this.services = {}
         this.index = 0
+        for (let item of Object.entries(registrations)) {
+            let [service, instances] = item
+            for (let instance of instances) {
+                this.register(service, instance)
+            }
+        }
+        console.log(this.services)
     }
 
     serviceMode() {
@@ -345,41 +369,25 @@ class Backend extends Service {
     }
 }
 
+let lb_registrations = {"db":["db1", "db2", "db3"]}
+
 let dns = new DNS()
-let webServerHost = new Host("webserver_host")
-let webServer1 = new WebServer()
-let webServer2 = new WebServer()
-webServerHost.addService(webServer1)
-webServerHost.addService(webServer2)
-dns.register("webserver", webServer1)
-dns.register("webserver", webServer2)
-let lb1 = new LoadBalancer()
-let lb2 = new LoadBalancer()
-let loadBalancerHost = new Host("loadbalancer_host")
-loadBalancerHost.addService(lb1)
-loadBalancerHost.addService(lb2)
-let dbHost = new Host("db_host")
-let db1 = new Database()
-let db2 = new Database()
-let db3 = new Database()
-dbHost.addService(db1)
-dbHost.addService(db2)
-dbHost.addService(db3)
-dns.register("db1", db1)
-dns.register("db2", db2)
-dns.register("db3", db3)
-lb1.register("db", "db1")
-lb1.register("db", "db2")
-lb1.register("db", "db3")
-lb2.register("db", "db1")
-lb2.register("db", "db2")
-lb2.register("db", "db3")
-dns.register("lb", lb1)
-dns.register("lb", lb2)
-let backendHost = new Host("backend_host")
-let backend1 = new Backend()
-let backend2 = new Backend()
-backendHost.addService(backend1)
-backendHost.addService(backend2)
-dns.register("backend", backend1)
-dns.register("backend", backend2)
+dns.registerAll([
+    new Host("webserver_host").addServices([
+        new WebServer(),
+        new WebServer()
+    ]),
+    new Host("loadbalancer_host").addServices([
+        new LoadBalancer(lb_registrations),
+        new LoadBalancer(lb_registrations)
+    ]),
+    new Host("db_host").addServices([
+        new Database(),
+        new Database(),
+        new Database()
+    ]),
+    new Host("backend_host").addServices([
+        new Backend(),
+        new Backend()
+    ])
+])
