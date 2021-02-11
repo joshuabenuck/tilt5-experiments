@@ -21,7 +21,6 @@
   </div>
   <div id="chart"></div>
   <div id="detail"></div>
-  <div id="scale"></div>
 
   <input id="basemap" type="checkbox"></input><label for="network">Basemap</label>
   <div id="base"></div>
@@ -31,6 +30,7 @@
   const NETWORK = 2
   let LOG_LEVEL = SERVICE
   let LOG_HOSTS = false
+  let SELECTION = undefined
   import { start, User, Source, WebServer, Backend, LoadBalancer, Database } from './objsim.js'
 
   class View {
@@ -63,6 +63,31 @@
       this.model[thing] = this.model[thing] || 0
       this.model[thing]++
       this.refresh()
+      current.host = null
+      packet.prevHop.host = null
+      packet.src.host = null
+      //console.log(SELECTION, typeof SELECTION, current.serviceName, current.instanceName)
+      if (SELECTION && SELECTION.includes("-&gt;")) {
+        let [left, right] = SELECTION.split("-&gt;")
+        if ((packet.prevHop.serviceName == left ||
+            packet.prevHop.instanceName == left) &&
+            (current.serviceName == right ||
+            current.instanceName == right)) {
+          detail.innerHTML = `<pre>
+          ${JSON.stringify(current, null, 2)}
+          ${JSON.stringify(packet, null, 2)}
+          </pre>
+          `
+        }
+      }
+      else if (current.serviceName == SELECTION || current.instanceName == SELECTION) {
+        console.log("match!")
+        detail.innerHTML = `<pre>
+        ${JSON.stringify(current, null, 2)}
+        ${JSON.stringify(packet, null, 2)}
+        </pre>
+        `
+      }
     }
 
     refresh() {
@@ -165,7 +190,10 @@
   }
 
   chart.addEventListener('mousedown', (e) => {
-    detail.innerHTML = `<h3>${e.target.parentElement.getElementsByTagName('title')[0].innerHTML}</h3>`
+    SELECTION = e.target.parentElement.getElementsByTagName('title')[0].innerHTML
+    console.log(SELECTION)
+    detail.innerHTML = "";
+    //detail.innerHTML = ` <h3>${e.target.parentElement.getElementsByTagName('title')[0].innerHTML}</h3> `
   })
 
   </script>
