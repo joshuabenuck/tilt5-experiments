@@ -68,17 +68,16 @@
       const nohost = (key, value) => key == 'host' ? `HOST(${value.hostname})` : value
       const stringify = (obj) => JSON.stringify(obj, nohost, 2)
       const selected = () => {detail.innerHTML = `<pre>current ${stringify(current)}\npacket ${stringify(packet)}</pre>`}
+      const iscur = (cur,it) => cur.serviceName == it || cur.instanceName == it || cur.host.hostname == it
+      const ispac = (pac,it) => pac.src.serviceName == it || pac.src.instanceName == it || pac.src.host.hostname == it || pac.prevHop.serviceName == it || pac.prevHop.instanceName == it || pac.prevHop.host.hostname == it
 
       if (SELECTION && SELECTION.includes("-&gt;")) {
         let [left, right] = SELECTION.split("-&gt;")
-        if ((packet.prevHop.serviceName == left ||
-            packet.prevHop.instanceName == left) &&
-            (current.serviceName == right ||
-            current.instanceName == right)) {
+        if (ispac(packet,left) && iscur(current,right)) {
           selected()
         }
       }
-      else if (current.serviceName == SELECTION || current.instanceName == SELECTION) {
+      else if (iscur(current,SELECTION)) {
         selected()
       }
     }
