@@ -168,7 +168,7 @@ class User extends Service {
         // goal, expectation
         let tasks = ["search:watches","browse:brand1","browse:brand2","cart:brand1","checkout"]
         for (let task of tasks) {
-            await delay(250)
+            await delay(norm(250))
             let success = await this.perform.call(this, ...task.split(":"))
             if (success) {
                 this.successes += 1
@@ -293,7 +293,7 @@ class Database extends Service {
     }
 
     handle(packet) {
-        delay(0.2)
+        delay(norm(100))
         log(SERVICE, this, packet)
         return "results"
     }
@@ -314,7 +314,7 @@ class Source extends Service {
     }
 
     async perform(action) {
-        await delay(100)
+        await delay(norm(100))
         let packet = new Packet({
             src: this,
             dst: "backend",
