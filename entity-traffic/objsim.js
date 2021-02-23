@@ -71,14 +71,14 @@ class Service {
         return this.instanceName
     }
 
-    networkSend(packet) {
+    async networkSend(packet) {
         let nextHop = packet.nextHop
         let service = dns.find(nextHop)
         if (service.host) {
             // resource cost...
-            return service.host.handle(packet, service)
+            return await service.host.handle(packet, service)
         }
-        return service.handle(packet)
+        return await service.handle(packet)
     }
 }
 
@@ -101,10 +101,10 @@ class Host {
         service.host = this
     }
 
-    handle(packet, service) {
+    async handle(packet, service) {
         // ask service for cpu, ram, and disk costs
         // tracks resource usage
-        service.handle(packet)
+        return await service.handle(packet)
     }
 }
 
@@ -154,7 +154,7 @@ class User extends Service {
     }
 
     async perform(action, param) {
-        await this.networkSend(new Packet({
+        return await this.networkSend(new Packet({
             dst: "webserver",
             src: this,
             nextHop: "webserver",
@@ -165,12 +165,28 @@ class User extends Service {
     }
 
     async achieve(goal) {
+        /*
+        let result = await this.search()
+        if (result.code != 200) {
+            return
+        }
+        for (let brand of result.payload.brands) {
+            result = await this.browse(brand)
+            if (result.code != 200) {
+                return
+            }
+        }
+        */
         // goal, expectation
-        let tasks = ["search:watches","browse:brand1","browse:brand2","cart:brand1","checkout"]
+        let tasks = ["search:watches"]//,"browse:brand1","browse:brand2","cart:brand1","checkout"]
         for (let task of tasks) {
             await delay(norm(250))
-            let success = await this.perform.call(this, ...task.split(":"))
-            if (success) {
+            let response = await this.perform.call(this, ...task.split(":"))
+            if (!response) {
+               console.log(task)
+               continue 
+            }
+            if (response.code == 200) {
                 this.successes += 1
             } else {
                 this.failures += 1
@@ -204,7 +220,7 @@ class WebServer extends Service {
         } else if (packet.op == "browse") {
             return await this.browse(packet.args[0])
         } else {
-            return 404
+            return {code: 200, payload: null}
         }
     }
 
@@ -286,16 +302,23 @@ class Database extends Service {
         let instance = Database.instance
         super("db", `db${instance}`)
         this.instance = Database.instance
+        this.failures = 0
+        this.successes = 0
     }
 
     serviceMode() {
         return Database.serviceMode
     }
 
-    handle(packet) {
+    async handle(packet) {
         delay(norm(100))
         log(SERVICE, this, packet)
-        return "results"
+        if (Math.random() > 0.01) {
+            this.successes += 1
+            return {code: 200, payload: "results"}
+        }
+        this.failures += 1
+        return {code: 500, message: "DB overloaded!"}
     }
 }
 
@@ -360,7 +383,9 @@ class Backend extends Service {
                 op: "query",
                 args: ["update"]
             })
-            return await this.networkSend(packet)
+            let response = await this.networkSend(packet)
+            //logEnd(...)
+            return response
         } else if (packet.op == "box") {
         } else if (packet.op == "bag") {
         } else {
