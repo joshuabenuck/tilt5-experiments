@@ -39,6 +39,7 @@
   let SELECTION = undefined
   let STAT = "total"
   import { start, User, Source, WebServer, Backend, LoadBalancer, Database } from './objsim.js'
+  import * as tilt from './tilt.js'
 
   class View {
     constructor(graph, color) {
@@ -194,7 +195,7 @@
           let rows = Object.keys(service.model).sort()
           let edges = rows.map(thing => `${thing}`)
           let dot = `digraph { rankdir=LR; node [shape=box style=filled fillcolor=bisque]; \n${edges.join("\n")} }`
-          hpccWasm.graphviz.layout(dot, "svg", "dot").then(svg => {base.innerHTML = svg})
+          hpccWasm.graphviz.layout(dot, "svg", "dot").then(svg => {tilt.start(base,svg)})
         } else {
           base.innerHTML = ''
         }
