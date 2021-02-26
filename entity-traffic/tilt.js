@@ -7,11 +7,50 @@ let lines, data
 
 async function start (div, svg) {
   parse(svg)
-  div.innerHTML = svg
+  render(div, svg)
 }
 
 
-// P A R S E   C E N T E R S
+// R E N D E R   A C T I V I T Y
+
+async function render (div, text) {
+  let view = [640, 480]
+  let tick = null
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(...view);
+  renderer.setPixelRatio(2);
+  div.appendChild(renderer.domElement);
+
+  const camera = new THREE.PerspectiveCamera(70, view[0]/view[1], 0.1, 15);
+  camera.position.z = 3;
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  const scene = new THREE.Scene();
+
+  scene.background = new THREE.Color('white')
+  let loader = new THREE.TextureLoader()
+  let url = 'data:image/svg+xml;base64,' + btoa(text)
+  loader.load(url, texture => {
+    let material = new THREE.MeshBasicMaterial({
+      map: texture, side: THREE.DoubleSide })
+    let geometry = new THREE.PlaneGeometry(
+        texture.image.width / 100,
+        texture.image.height / 100)
+    let basemap = new THREE.Mesh(geometry, material)
+    scene.add(basemap)
+  })
+
+  renderer.setAnimationLoop(() => {
+    controls.update();
+    if(tick) tick()
+    renderer.render(scene, camera);
+  })
+}
+
+
+// P A R S E   D I M E N T I O N S
 
 function parse(text) {
   let lines = text.split(/\n/)
@@ -25,6 +64,10 @@ function parse(text) {
       if (lines[0].startsWith('<!--')) {} else
       if (lines[0].endsWith('-->')) {} else
       if (lines[0] == '') {} else
+      if (lines[0].startsWith('<?xml')) {} else
+      if (lines[0].startsWith('<!DOCTYPE')) {} else
+      if (lines[0].startsWith(' "http://www.w3.org')) {} else
+      if (lines[0].startsWith(' viewBox=')) {} else
       if (lines[0].startsWith('<svg')) {} else
       if (lines[0].startsWith('</svg')) {} else
       if (lines[0].startsWith('<g id="graph')) { graph() } else
