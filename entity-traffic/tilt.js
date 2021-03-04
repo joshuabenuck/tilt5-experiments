@@ -6,14 +6,14 @@ export { start }
 let lines, data
 
 async function start (div, svg) {
-  let nodes = parse(svg)
-  render(div, svg, nodes)
+  let {width, height, data} = parse(svg)
+  render(div, svg, data, width, height)
 }
 
 
 // R E N D E R   A C T I V I T Y
 
-async function render (div, text, nodes) {
+async function render (div, text, nodes, width, height) {
   let view = [640, 480]
   let tick = null
   const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -49,7 +49,7 @@ async function render (div, text, nodes) {
     renderer.render(scene, camera);
   })
 
-  let dim = [269, 152]
+  let dim = [width, height]
   
   console.table(nodes)
   for (let n in nodes) {
@@ -84,9 +84,11 @@ async function render (div, text, nodes) {
 function parse(text) {
   let lines = text.split(/\n/)
   let data = {}
+  let width = 0
+  let height = 0
   file()
   console.table(data)
-  return data
+  return {width, height, data}
 
   function file() {
     while (lines.length) {
@@ -97,7 +99,13 @@ function parse(text) {
       if (lines[0].startsWith('<!DOCTYPE')) {} else
       if (lines[0].startsWith(' "http://www.w3.org')) {} else
       if (lines[0].startsWith(' viewBox=')) {} else
-      if (lines[0].startsWith('<svg')) {} else
+      if (lines[0].startsWith('<svg')) {
+        // <svg width="262pt" height="98pt"
+        console.log(lines[0])
+        let m = lines[0].match(/width="(\d+)pt" height="(\d+)pt"/)
+        width = m[1]
+        height = m[2]
+      } else
       if (lines[0].startsWith('</svg')) {} else
       if (lines[0].startsWith('<g id="graph')) { graph() } else
       { trouble('svg') }
