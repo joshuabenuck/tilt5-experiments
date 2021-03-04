@@ -6,14 +6,14 @@ export { start }
 let lines, data
 
 async function start (div, svg) {
-  parse(svg)
-  render(div, svg)
+  let nodes = parse(svg)
+  render(div, svg, nodes)
 }
 
 
 // R E N D E R   A C T I V I T Y
 
-async function render (div, text) {
+async function render (div, text, nodes) {
   let view = [640, 480]
   let tick = null
   const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -30,6 +30,7 @@ async function render (div, text) {
   const scene = new THREE.Scene();
 
   scene.background = new THREE.Color('white')
+  scene.add(new THREE.AmbientLight(0xffffff, .7))
   let loader = new THREE.TextureLoader()
   let url = 'data:image/svg+xml;base64,' + btoa(text)
   loader.load(url, texture => {
@@ -47,6 +48,34 @@ async function render (div, text) {
     if(tick) tick()
     renderer.render(scene, camera);
   })
+
+  let dim = [269, 152]
+  
+  console.table(nodes)
+  for (let n in nodes) {
+    let geo = new THREE.CubeGeometry(.5,.3,.1)
+    let mat = new THREE.MeshStandardMaterial({
+        color:'bisque',
+        opacity: 0.5,
+        transparent: true,
+      })
+    let at = xy => {
+      console.log("xy", xy)
+      return [
+      (xy.x-dim[0]/2)/100,
+      (-xy.y-dim[1]/2)/100]
+    }
+    let be = h => {
+      let dot = new THREE.Mesh(geo, mat)
+      let p = new THREE.Vector3(...at(nodes[n]), h)
+      console.log(p)
+      dot.position.copy(p)
+      scene.add(dot)
+    }
+    be(.3)
+    if(['backend','db'].includes(n)) be(.5)
+    if(['user','source'].includes(n)) {be(.5);be(.7)}
+  }
 }
 
 
