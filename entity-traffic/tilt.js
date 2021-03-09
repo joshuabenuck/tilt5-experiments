@@ -14,7 +14,8 @@ function start (div, svg) {
 }
 
 function log (level, current, packet) {
-  update (current)
+  discover ([current.instanceName, current.serviceName, current.host.hostname])
+  discover ([packet.prevHop.instanceName, packet.prevHop.serviceName, packet.prevHop.host.hostname])
 }
 
 
@@ -66,20 +67,23 @@ let mat = new THREE.MeshStandardMaterial({
     transparent: true,
   })
 
-function update (current) {
+function discover (aliases) {
   const at = xy => [(xy.x-dim[0]/2)/100, (-xy.y-dim[1]/2)/100]
-  const brick = height => {
+  const brick = (what, height) => {
     let dot = new THREE.Mesh(geo, mat)
-    let p = new THREE.Vector3(...at(nodes[n]), height)
+    let p = new THREE.Vector3(...at(nodes[what]), height)
     dot.position.copy(p)
     scene.add(dot)
   }
-
-  let names = [current.serviceName, current.instanceName, current.host.hostname]
-  let n = names.filter(name => nodes[name])[0]
-  if (!n || nodes[n].showing) return
-  nodes[n].showing = true
-  brick(.3)
+  // what is in the diagram
+  let what = aliases.filter(name => nodes[name])[0]
+  if (!what) return
+  let stack = nodes[what].stack = nodes[what].stack || []
+  // who is in the stack
+  let who = aliases[0]
+  if (stack.includes(who)) return
+  stack.push(who)
+  brick(what, .1 + .2 * stack.length)
 }
 
 
