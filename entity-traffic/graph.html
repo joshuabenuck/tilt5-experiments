@@ -109,6 +109,7 @@
     }
 
     harvest() {
+      if(basemap.checked) return
       let rows = Object.keys(this.model).sort()
       //display("chart", abstract(rows, 'balancer').map(thing => `${thing} [label="${label[thing]||model[thing]}"]`))
       //rows = rows.filter((k) => !k.startsWith("user ->"))
@@ -125,7 +126,10 @@
 
   let service = new View("chart", "gold")
   start(
-    (...args) => service.log(...args)
+    (...args) => {
+      service.log(...args)
+      if (basemap.checked) tilt.log(...args)
+    }
   )
 
   function abstract(rows, detail) {

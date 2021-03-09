@@ -1,19 +1,26 @@
 
 import * as THREE from 'https://unpkg.com/three@0.124.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.124.0/examples/jsm/controls/OrbitControls.js';
-export { start }
+export { start, log }
 
-let lines, data
+let nodes, dim
+let scene
 
-async function start (div, svg) {
+function start (div, svg) {
   let {width, height, data} = parse(svg)
-  render(div, svg, data, width, height)
+  nodes = data
+  dim = [width, height]
+  scene = render(div, svg, nodes, width, height)
+}
+
+function log (level, current, packet) {
+  update (current)
 }
 
 
 // R E N D E R   A C T I V I T Y
 
-async function render (div, text, nodes, width, height) {
+function render (div, text, nodes, width, height) {
   let view = [640, 480]
   let tick = null
   const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -49,33 +56,30 @@ async function render (div, text, nodes, width, height) {
     renderer.render(scene, camera);
   })
 
-  let dim = [width, height]
-  
-  console.table(nodes)
-  for (let n in nodes) {
-    let geo = new THREE.CubeGeometry(.5,.3,.1)
-    let mat = new THREE.MeshStandardMaterial({
-        color:'bisque',
-        opacity: 0.5,
-        transparent: true,
-      })
-    let at = xy => {
-      console.log("xy", xy)
-      return [
-      (xy.x-dim[0]/2)/100,
-      (-xy.y-dim[1]/2)/100]
-    }
-    let be = h => {
-      let dot = new THREE.Mesh(geo, mat)
-      let p = new THREE.Vector3(...at(nodes[n]), h)
-      console.log(p)
-      dot.position.copy(p)
-      scene.add(dot)
-    }
-    be(.3)
-    if(['backend','db'].includes(n)) be(.5)
-    if(['user','source'].includes(n)) {be(.5);be(.7)}
+  return scene
+}
+
+let geo = new THREE.CubeGeometry(.5,.3,.1)
+let mat = new THREE.MeshStandardMaterial({
+    color:'bisque',
+    opacity: 0.5,
+    transparent: true,
+  })
+
+function update (current) {
+  const at = xy => [(xy.x-dim[0]/2)/100, (-xy.y-dim[1]/2)/100]
+  const brick = height => {
+    let dot = new THREE.Mesh(geo, mat)
+    let p = new THREE.Vector3(...at(nodes[n]), height)
+    dot.position.copy(p)
+    scene.add(dot)
   }
+
+  let names = [current.serviceName, current.instanceName, current.host.hostname]
+  let n = names.filter(name => nodes[name])[0]
+  if (!n || nodes[n].showing) return
+  nodes[n].showing = true
+  brick(.3)
 }
 
 
