@@ -24,15 +24,12 @@ function start(model_logger) {
   log = model_logger
   for (let name of ['Joshua', 'Beth', 'Ward', 'Eric']) {
       let user = new User(name)
-      user.host = new Host(`${name}_host`)
+      user.host = new Host(`gateway`)
       user.run()
   }
   for (let vendor of ['amazon', 'apple', 'shopify']) {
       let source = new Source(vendor)
-      source.host = new Host(`${vendor}_host`)
-      source.run()
-      source = new Source(vendor)
-      source.host = new Host(`${vendor}_host`)
+      source.host = new Host(`gateway`)
       source.run()
   }
 }
