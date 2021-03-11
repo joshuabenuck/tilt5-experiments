@@ -161,21 +161,39 @@ class User extends Service {
         }))
     }
 
+    async search(what) {
+        return await this.perform("search", what)
+    }
+
+    async browse(what) {
+        return await this.perform("browse", what)
+    }
+
     async achieve(goal) {
-        /*
-        let result = await this.search()
+        await delay(norm(250))
+        let result = await this.search("watches")
         if (result.code != 200) {
-            return
+            // possible stack overflow since we don't track recursion depth
+            // TODO: roll the dice when deciding whether to try again
+            this.failures += 1
+            await delay(norm(1000))
+            return await this.achieve(goal)
         }
+        await delay(norm(3000))
+        // TODO: Vary percentage of brands browsed
         for (let brand of result.payload.brands) {
+            await delay(norm(250))
             result = await this.browse(brand)
             if (result.code != 200) {
-                return
+                this.failures += 1
+                await delay(norm(1000))
+                return await this.achieve(goal)
             }
+            this.successes += 1
+            await delay(norm(3000))
         }
-        */
         // goal, expectation
-        let tasks = ["search:watches"]//,"browse:brand1","browse:brand2","cart:brand1","checkout"]
+        /*let tasks = ["search:watches"]//,"browse:brand1","browse:brand2","cart:brand1","checkout"]
         for (let task of tasks) {
             await delay(norm(250))
             let response = await this.perform.call(this, ...task.split(":"))
@@ -188,7 +206,7 @@ class User extends Service {
             } else {
                 this.failures += 1
             }
-        }
+        }*/
     }
 
     async run() {
@@ -301,6 +319,13 @@ class Database extends Service {
         this.instance = Database.instance
         this.failures = 0
         this.successes = 0
+        Database.inventory = {
+            brands: {
+                "basic": 3000,
+                "fancy": 3000,
+                "expensive": 3000
+            }
+        }
     }
 
     serviceMode() {
@@ -312,7 +337,14 @@ class Database extends Service {
         log(SERVICE, this, packet)
         if (Math.random() > 0.01) {
             this.successes += 1
-            return {code: 200, payload: "results"}
+            let payload = {}
+            if (packet.args[0] == "watches") {
+                payload = {brands: ["basic", "fancy", "expensive"]}
+            }
+            if (packet.args[0] == "basic") {
+                Database.inventory.brands.basic -= 1;
+            }
+            return {code: 200, payload}
         }
         this.failures += 1
         return {code: 500, message: "DB overloaded!"}

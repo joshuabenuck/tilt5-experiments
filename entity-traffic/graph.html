@@ -88,7 +88,7 @@
 
       const nohost = (key, value) => key == 'host' ? `HOST(${value.hostname})` : value
       const stringify = (obj) => JSON.stringify(obj, nohost, 2)
-      const selected = () => {detail.innerHTML = `<pre>current ${stringify(current)}\npacket ${stringify(packet)}</pre>`}
+      const selected = () => {detail.innerHTML = `<pre>db ${stringify(Database.inventory)}\ncurrent ${stringify(current)}\npacket ${stringify(packet)}</pre>`}
       const iscur = (cur,it) => cur.serviceName == it || cur.instanceName == it || cur.host.hostname == it
       const ispac = (pac,it) => pac.src.serviceName == it || pac.src.instanceName == it || pac.src.host.hostname == it || pac.prevHop.serviceName == it || pac.prevHop.instanceName == it || pac.prevHop.host.hostname == it
 
